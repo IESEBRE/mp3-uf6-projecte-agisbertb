@@ -1,10 +1,16 @@
 package org.example.controller;
 
+import org.example.model.entities.Propietari;
+import org.example.model.exceptions.DAOException;
 import org.example.model.impls.BiciDAOImpl;
 import org.example.model.impls.PropietariDAOImpl;
 import org.example.model.impls.RevisioDAOImpl;
 import org.example.view.ModelComponentsVisuals;
 import org.example.view.Vista;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.util.List;
 
 public class MainController {
     private BiciDAOImpl bicicletaDAO;
@@ -12,7 +18,6 @@ public class MainController {
     private RevisioDAOImpl revisioDAO;
     private Vista view;
     private ModelComponentsVisuals modelComponentsVisuals;
-    private ViewController viewController;
 
     public MainController() {
         bicicletaDAO = new BiciDAOImpl();
@@ -20,12 +25,28 @@ public class MainController {
         revisioDAO = new RevisioDAOImpl();
         view = new Vista();
         modelComponentsVisuals = new ModelComponentsVisuals();
-        viewController = new ViewController(view, modelComponentsVisuals);
 
-        new BiciController(bicicletaDAO, view, viewController);
-        new PropietariController(propietariDAO, view, viewController);
-        new RevisioController(revisioDAO, view, viewController);
+        initViewController();
+        initControllers();
 
         view.setVisible(true);
+    }
+
+    private void initViewController() {
+        try {
+            // Cargar propietarios y configurar el ComboBoxModel
+            List<Propietari> propietaris = propietariDAO.getAll();
+            modelComponentsVisuals.setPropietarisComboBoxModel(propietaris);
+        } catch (DAOException e) {
+            e.printStackTrace();
+        }
+
+        new ViewController(view, modelComponentsVisuals);
+    }
+
+    private void initControllers() {
+        new BiciController(bicicletaDAO, view, new ViewController(view, modelComponentsVisuals));
+        new PropietariController(propietariDAO, view, new ViewController(view, modelComponentsVisuals));
+        new RevisioController(revisioDAO, view, new ViewController(view, modelComponentsVisuals));
     }
 }

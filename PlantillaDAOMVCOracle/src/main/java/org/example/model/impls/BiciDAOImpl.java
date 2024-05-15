@@ -75,21 +75,23 @@ public class BiciDAOImpl implements DAO<Bici> {
                         Bici.Carboni.valueOf(rs.getString("carboni")),
                         getPropietari(rs.getLong("propietari_id"), con)
                 );
+                bici.setId(rs.getLong("bici_id"));  // Asegurarse de establecer el ID
                 bici.setRevisions(getRevisions(rs.getLong("bici_id"), con));
                 bicicletes.add(bici);
             }
         } catch (SQLException throwables) {
-            throw new DAOException(1);
+            throw new DAOException(1, throwables.getMessage());
         }
         return bicicletes;
     }
+
 
     @Override
     public void save(Bici bici) throws DAOException {
         try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement st = con.prepareStatement(
                      "INSERT INTO Bicicletes (marca, model, any_fabricacio, pes, tipus, carboni, propietari_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                     Statement.RETURN_GENERATED_KEYS)) {
+                     new String[] { "bici_id" })) {
 
             st.setString(1, bici.getMarca());
             st.setString(2, bici.getModelBici());
@@ -101,24 +103,29 @@ public class BiciDAOImpl implements DAO<Bici> {
 
             int affectedRows = st.executeUpdate();
             if (affectedRows == 0) {
-                throw new DAOException(1);
+                throw new DAOException(1, "No rows affected.");
             }
 
             try (ResultSet generatedKeys = st.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    Long biciId = generatedKeys.getLong(1);
-                    saveRevisions(biciId, bici.getRevisions(), con);
+                    bici.setId(generatedKeys.getLong(1));
+                    saveRevisions(bici.getId(), bici.getRevisions(), con);
                 } else {
-                    throw new DAOException(1);
+                    throw new DAOException(1, "Failed to retrieve generated key.");
                 }
             }
-        } catch (SQLException throwables) {
-            throw new DAOException(1);
+        } catch (SQLException e) {
+            throw new DAOException(1, e.getMessage());
         }
     }
 
+
     @Override
     public void update(Bici bici) throws DAOException {
+        if (bici == null || bici.getId() == null) {
+            throw new DAOException(1, "La bici o el seu ID és null");
+        }
+
         try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement st = con.prepareStatement(
                      "UPDATE Bicicletes SET marca = ?, model = ?, any_fabricacio = ?, pes = ?, tipus = ?, carboni = ?, propietari_id = ? WHERE bici_id = ?")) {
@@ -132,29 +139,42 @@ public class BiciDAOImpl implements DAO<Bici> {
             st.setLong(7, bici.getPropietari().getId());
             st.setLong(8, bici.getId());
 
-            st.executeUpdate();
+            int affectedRows = st.executeUpdate();
+            if (affectedRows == 0) {
+                throw new DAOException(1, "No s'ha actualitzat cap fila");
+            }
 
             updateRevisions(bici.getId(), bici.getRevisions(), con);
         } catch (SQLException throwables) {
-            throw new DAOException(1);
+            throw new DAOException(1, throwables.getMessage());
         }
     }
 
+
     @Override
     public void delete(Long id) throws DAOException {
+        if (id == null) {
+            throw new DAOException(1, "L'ID de la bici és null.");
+        }
+
         try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement st = con.prepareStatement("DELETE FROM Bicicletes WHERE bici_id = ?")) {
 
             st.setLong(1, id);
             st.executeUpdate();
         } catch (SQLException throwables) {
-            throw new DAOException(1);
+            throw new DAOException(1, throwables.getMessage());
         }
     }
 
     public void delete(Bici bici) throws DAOException {
+        if (bici == null) {
+            throw new DAOException(1, "La bici és null.");
+        }
         delete(bici.getId());
     }
+
+
 
     private Propietari getPropietari(Long propietariId, Connection con) throws SQLException {
         if (propietariId == null) return null;
@@ -194,22 +214,22 @@ public class BiciDAOImpl implements DAO<Bici> {
     }
 
     private void saveRevisions(Long biciId, Set<Revisio> revisions, Connection con) throws SQLException {
-        for (Revisio revisio : revisions) {
-            try (PreparedStatement st = con.prepareStatement(
-                    "INSERT INTO Revisions (data, descripcio, bici_id) VALUES (?, ?, ?)")) {
-                st.setDate(1, Date.valueOf(revisio.getData()));
-                st.setString(2, revisio.getDescripcio());
-                st.setLong(3, biciId);
-                st.executeUpdate();
-            }
-        }
+//        for (Revisio revisio : revisions) {
+//            try (PreparedStatement st = con.prepareStatement(
+//                    "INSERT INTO Revisions (data, descripcio, bici_id) VALUES (?, ?, ?)")) {
+//                st.setDate(1, Date.valueOf(revisio.getData()));
+//                st.setString(2, revisio.getDescripcio());
+//                st.setLong(3, biciId);
+//                st.executeUpdate();
+//            }
+//        }
     }
 
     private void updateRevisions(Long biciId, Set<Revisio> revisions, Connection con) throws SQLException {
-        try (PreparedStatement st = con.prepareStatement("DELETE FROM Revisions WHERE bici_id = ?")) {
-            st.setLong(1, biciId);
-            st.executeUpdate();
-        }
-        saveRevisions(biciId, revisions, con);
+//        try (PreparedStatement st = con.prepareStatement("DELETE FROM Revisions WHERE bici_id = ?")) {
+//            st.setLong(1, biciId);
+//            st.executeUpdate();
+//        }
+//        saveRevisions(biciId, revisions, con);
     }
 }

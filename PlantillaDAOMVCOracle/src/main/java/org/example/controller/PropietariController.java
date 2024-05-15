@@ -7,6 +7,7 @@ import org.example.view.Vista;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
 
@@ -34,20 +35,22 @@ public class PropietariController {
         try {
             List<Propietari> propietaris = propietariDAO.getAll();
             updatePropietariTable(propietaris);
+            updatePropietariComboBox(propietaris);
         } catch (DAOException e) {
             setExcepcio(new DAOException(e.getTipo()));
         }
     }
 
     private void initListeners() {
-        viewController.addActionListener(e -> {
+        ActionListener actionListener = e -> {
             if (viewController.modePropietari()) {
                 if (e.getSource() == view.getInsertarButton()) inserirPropietari();
                 else if (e.getSource() == view.getModificarButton()) modificarPropietari();
                 else if (e.getSource() == view.getBorrarButton()) eliminarPropietari();
             }
-        });
+        };
 
+        viewController.addActionListener(actionListener);
         viewController.addListSelectionListenerToPropietaris(e -> {
             if (!e.getValueIsAdjusting() && viewController.modePropietari()) {
                 mostrarDadesPropietari();
@@ -69,7 +72,9 @@ public class PropietariController {
 
             Propietari nouPropietari = new Propietari(nom, cognoms, telefon, email);
             propietariDAO.save(nouPropietari);
-            updatePropietariTable(propietariDAO.getAll());
+            List<Propietari> propietaris = propietariDAO.getAll();
+            updatePropietariTable(propietaris);
+            updatePropietariComboBox(propietaris);
 
             JOptionPane.showMessageDialog(view, "Propietari afegit correctament", "Afegir propietari", JOptionPane.INFORMATION_MESSAGE);
 
@@ -103,7 +108,9 @@ public class PropietariController {
                 propietari.setEmail(email);
 
                 propietariDAO.update(propietari);
-                updatePropietariTable(propietariDAO.getAll());
+                List<Propietari> propietaris = propietariDAO.getAll();
+                updatePropietariTable(propietaris);
+                updatePropietariComboBox(propietaris);
 
                 JOptionPane.showMessageDialog(view, "Propietari modificat correctament", "Modificar propietari", JOptionPane.INFORMATION_MESSAGE);
 
@@ -121,7 +128,9 @@ public class PropietariController {
                 DefaultTableModel tableModel = (DefaultTableModel) view.getTaulaPropietaris().getModel();
                 Propietari propietari = (Propietari) tableModel.getValueAt(fila, 4);
                 propietariDAO.delete(propietari);
-                updatePropietariTable(propietariDAO.getAll());
+                List<Propietari> propietaris = propietariDAO.getAll();
+                updatePropietariTable(propietaris);
+                updatePropietariComboBox(propietaris);
 
                 JOptionPane.showMessageDialog(view, "Propietari eliminat correctament", "Eliminar propietari", JOptionPane.INFORMATION_MESSAGE);
             }
@@ -136,6 +145,10 @@ public class PropietariController {
         for (Propietari propietari : propietaris) {
             model.addRow(new Object[]{propietari.getNom(), propietari.getCognoms(), propietari.getTelefon(), propietari.getEmail(), propietari});
         }
+    }
+
+    public void updatePropietariComboBox(List<Propietari> propietaris) {
+        viewController.updatePropietariComboBox(propietaris);
     }
 
     private void llimpiarDadesPropietari() {

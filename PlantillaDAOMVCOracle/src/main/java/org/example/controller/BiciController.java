@@ -7,18 +7,20 @@ import org.example.model.impls.BiciDAOImpl;
 import org.example.view.Vista;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
 
 public class BiciController {
-    private BiciDAOImpl biciDAO;
+    private BiciDAOImpl bicicletaDAO;
     private Vista view;
     private PropertyChangeSupport propertyChangeSupport;
     private ViewController viewController;
 
-    public BiciController(BiciDAOImpl biciDAO, Vista view, ViewController viewController) {
-        this.biciDAO = biciDAO;
+    public BiciController(BiciDAOImpl bicicletaDAO, Vista view, ViewController viewController) {
+        this.bicicletaDAO = bicicletaDAO;
         this.view = view;
         this.viewController = viewController;
         propertyChangeSupport = new PropertyChangeSupport(this);
@@ -33,7 +35,7 @@ public class BiciController {
 
     private void initView() {
         try {
-            List<Bici> bicis = biciDAO.getAll();
+            List<Bici> bicis = bicicletaDAO.getAll();
             updateBiciTable(bicis);
         } catch (DAOException e) {
             setExcepcio(new DAOException(e.getTipo()));
@@ -41,14 +43,15 @@ public class BiciController {
     }
 
     private void initListeners() {
-        viewController.addActionListener(e -> {
+        ActionListener actionListener = e -> {
             if (viewController.modeBici()) {
                 if (e.getSource() == view.getInsertarButton()) inserirBici();
                 else if (e.getSource() == view.getModificarButton()) modificarBici();
                 else if (e.getSource() == view.getBorrarButton()) eliminarBici();
             }
-        });
+        };
 
+        viewController.addActionListener(actionListener);
         viewController.addListSelectionListenerToBicis(e -> {
             if (!e.getValueIsAdjusting() && viewController.modeBici()) {
                 mostrarDadesBici();
@@ -60,34 +63,38 @@ public class BiciController {
         try {
             String marca = view.getCampMarca().getText().trim();
             String model = view.getCampModelBici().getText().trim();
-            String pesStr = view.getCampPes().getText().trim();
-            String anyStr = view.getCampAnyFabricacio().getText().trim();
-            Bici.TipoBici tipo = (Bici.TipoBici) view.getComboTipus().getSelectedItem();
+            String pesText = view.getCampPes().getText().trim();
+            String anyText = view.getCampAnyFabricacio().getText().trim();
+            Bici.TipoBici tipus = (Bici.TipoBici) view.getComboTipus().getSelectedItem();
             Bici.Carboni carboni = (Bici.Carboni) view.getComboCarboni().getSelectedItem();
             Propietari propietari = (Propietari) view.getComboPropietari().getSelectedItem();
 
-            if (marca.isEmpty() || model.isEmpty() || pesStr.isEmpty() || anyStr.isEmpty() || propietari == null) {
+            if (marca.isEmpty() || model.isEmpty() || pesText.isEmpty() || anyText.isEmpty() || tipus == null || carboni == null || propietari == null) {
                 JOptionPane.showMessageDialog(view, "Tots els camps són obligatoris", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            double pes = Double.parseDouble(pesStr);
-            int any = Integer.parseInt(anyStr);
+            double pes = Double.parseDouble(pesText);
+            int any = Integer.parseInt(anyText);
 
-            Bici novaBici = new Bici(marca, model, any, pes, tipo, carboni, propietari);
-            biciDAO.save(novaBici);
-            updateBiciTable(biciDAO.getAll());
+            Bici novaBici = new Bici(marca, model, any, pes, tipus, carboni, propietari);
+            bicicletaDAO.save(novaBici);
+
+            // Actualizar la tabla después de la inserción
+            List<Bici> bicis = bicicletaDAO.getAll();
+            updateBiciTable(bicis);
 
             JOptionPane.showMessageDialog(view, "Bici afegida correctament", "Afegir bici", JOptionPane.INFORMATION_MESSAGE);
 
             llimpiarDadesBici();
 
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(view, "Error en el format dels camps numèrics", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (DAOException e) {
             setExcepcio(new DAOException(e.getTipo()));
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(view, "Pes i Any han de ser números", "Error de format", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     private void modificarBici() {
         try {
@@ -97,58 +104,59 @@ public class BiciController {
                 Bici bici = (Bici) tableModel.getValueAt(fila, 7);
 
                 String marca = view.getCampMarca().getText().trim();
-                String model = view.getCampModelBici().getText().trim();
-                String pesStr = view.getCampPes().getText().trim();
-                String anyStr = view.getCampAnyFabricacio().getText().trim();
+                String modelBici = view.getCampModelBici().getText().trim();
+                int anyFabricacio = Integer.parseInt(view.getCampAnyFabricacio().getText().trim());
+                double pes = Double.parseDouble(view.getCampPes().getText().trim());
                 Bici.TipoBici tipo = (Bici.TipoBici) view.getComboTipus().getSelectedItem();
                 Bici.Carboni carboni = (Bici.Carboni) view.getComboCarboni().getSelectedItem();
                 Propietari propietari = (Propietari) view.getComboPropietari().getSelectedItem();
 
-                if (marca.isEmpty() || model.isEmpty() || pesStr.isEmpty() || anyStr.isEmpty() || propietari == null) {
+                if (marca.isEmpty() || modelBici.isEmpty() || view.getCampAnyFabricacio().getText().trim().isEmpty() || view.getCampPes().getText().trim().isEmpty()) {
                     JOptionPane.showMessageDialog(view, "Tots els camps són obligatoris", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                double pes = Double.parseDouble(pesStr);
-                int any = Integer.parseInt(anyStr);
-
                 bici.setMarca(marca);
-                bici.setModelBici(model);
+                bici.setModelBici(modelBici);
+                bici.setAnyFabricacio(anyFabricacio);
                 bici.setPes(pes);
-                bici.setAnyFabricacio(any);
                 bici.setTipo(tipo);
                 bici.setCarboni(carboni);
                 bici.setPropietari(propietari);
 
-                biciDAO.update(bici);
-                updateBiciTable(biciDAO.getAll());
+                bicicletaDAO.update(bici);
+                updateBiciTable(bicicletaDAO.getAll());
 
                 JOptionPane.showMessageDialog(view, "Bici modificada correctament", "Modificar bici", JOptionPane.INFORMATION_MESSAGE);
-
                 llimpiarDadesBici();
             }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(view, "Error en el format dels camps numèrics", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (DAOException e) {
             setExcepcio(new DAOException(e.getTipo()));
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(view, "Format de número incorrecte", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
     private void eliminarBici() {
         try {
             int fila = view.getTaulaBicis().getSelectedRow();
             if (fila != -1) {
                 DefaultTableModel tableModel = (DefaultTableModel) view.getTaulaBicis().getModel();
                 Bici bici = (Bici) tableModel.getValueAt(fila, 7);
-                biciDAO.delete(bici);
-                updateBiciTable(biciDAO.getAll());
+                if (bici != null && bici.getId() != null) {
+                    bicicletaDAO.delete(bici);
 
-                JOptionPane.showMessageDialog(view, "Bici eliminada correctament", "Eliminar bici", JOptionPane.INFORMATION_MESSAGE);
+                    updateBiciTable(bicicletaDAO.getAll());
+
+                    JOptionPane.showMessageDialog(view, "Bici eliminada correctament", "Eliminar bici", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(view, "La bici o el seu ID és null", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         } catch (DAOException e) {
             setExcepcio(new DAOException(e.getTipo()));
         }
     }
+
 
     public void updateBiciTable(List<Bici> bicis) {
         DefaultTableModel model = (DefaultTableModel) view.getTaulaBicis().getModel();

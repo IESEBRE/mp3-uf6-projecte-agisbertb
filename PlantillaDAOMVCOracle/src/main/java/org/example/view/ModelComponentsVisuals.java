@@ -7,6 +7,7 @@ import org.example.model.entities.Revisio;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.time.LocalDate;
+import java.util.List;
 
 public class ModelComponentsVisuals {
 
@@ -14,9 +15,9 @@ public class ModelComponentsVisuals {
     private DefaultTableModel modelTaulaPropietaris;
     private DefaultTableModel modelTaulaRevisions;
 
-    private ComboBoxModel<Bici.TipoBici> comboBoxModelTipusBici;
-    private ComboBoxModel<Bici.Carboni> comboBoxModelCarboni;
-    private ComboBoxModel<Propietari> comboBoxModelPropietari;
+    private DefaultComboBoxModel<Bici.TipoBici> comboBoxModelTipusBici;
+    private DefaultComboBoxModel<Bici.Carboni> comboBoxModelCarboni;
+    private DefaultComboBoxModel<Propietari> comboBoxModelPropietari;
 
     public ModelComponentsVisuals() {
         initializeBiciModel();
@@ -25,7 +26,7 @@ public class ModelComponentsVisuals {
 
         comboBoxModelTipusBici = new DefaultComboBoxModel<>(Bici.TipoBici.values());
         comboBoxModelCarboni = new DefaultComboBoxModel<>(Bici.Carboni.values());
-        comboBoxModelPropietari = new DefaultComboBoxModel<>(); // Assuming owners are loaded from the database
+        comboBoxModelPropietari = new DefaultComboBoxModel<>();
     }
 
     private void initializeBiciModel() {
@@ -87,6 +88,14 @@ public class ModelComponentsVisuals {
                 }
             }
         };
+    }
+
+    // Método para actualizar el ComboBoxModel con la lista de propietarios
+    public void setPropietarisComboBoxModel(List<Propietari> propietaris) {
+        comboBoxModelPropietari.removeAllElements();
+        for (Propietari propietari : propietaris) {
+            comboBoxModelPropietari.addElement(propietari);
+        }
     }
 
     // Getters
