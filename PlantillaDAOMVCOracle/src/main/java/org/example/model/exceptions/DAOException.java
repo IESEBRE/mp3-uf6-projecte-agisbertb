@@ -27,15 +27,19 @@ public class DAOException extends Exception{
     //atribut
     private int tipo;
 
-    //constructor al q pasem tipo
-    public DAOException(int tipo){
-        this.tipo=tipo;
+    public DAOException(int tipo) {
+        super();
+        this.tipo = tipo;
     }
 
-    //sobreescrivim el get message
-        @Override
-    public String getMessage(){
-        return missatges.get(this.tipo); //el missatge del tipo
+    public DAOException(int tipo, String message) {
+        super(message);
+        this.tipo = tipo;
+    }
+
+    public DAOException(int tipo, String message, Throwable cause) {
+        super(message, cause);
+        this.tipo = tipo;
     }
 
     public int getTipo() {
