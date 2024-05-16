@@ -18,6 +18,7 @@ public class ModelComponentsVisuals {
     private DefaultComboBoxModel<Bici.TipoBici> comboBoxModelTipusBici;
     private DefaultComboBoxModel<Bici.Carboni> comboBoxModelCarboni;
     private DefaultComboBoxModel<Propietari> comboBoxModelPropietari;
+    private DefaultComboBoxModel<Bici> comboBoxModelBici;
 
     public ModelComponentsVisuals() {
         initializeBiciModel();
@@ -27,6 +28,7 @@ public class ModelComponentsVisuals {
         comboBoxModelTipusBici = new DefaultComboBoxModel<>(Bici.TipoBici.values());
         comboBoxModelCarboni = new DefaultComboBoxModel<>(Bici.Carboni.values());
         comboBoxModelPropietari = new DefaultComboBoxModel<>();
+        comboBoxModelBici = new DefaultComboBoxModel<>();
     }
 
     private void initializeBiciModel() {
@@ -73,7 +75,7 @@ public class ModelComponentsVisuals {
     }
 
     private void initializeRevisioModel() {
-        modelTaulaRevisions = new DefaultTableModel(new Object[]{"Data", "Descripcio", "Object"}, 0) {
+        modelTaulaRevisions = new DefaultTableModel(new Object[]{"Data", "Descripcio", "Bici" ,"Object"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -84,6 +86,7 @@ public class ModelComponentsVisuals {
                 switch (column) {
                     case 0: return LocalDate.class;
                     case 1: return String.class;
+                    case 2: return Bici.class;
                     default: return Object.class;
                 }
             }
@@ -121,5 +124,9 @@ public class ModelComponentsVisuals {
 
     public ComboBoxModel<Propietari> getComboBoxModelPropietari() {
         return comboBoxModelPropietari;
+    }
+
+    public ComboBoxModel<Bici> getComboBoxModelBici() {
+        return comboBoxModelBici;
     }
 }

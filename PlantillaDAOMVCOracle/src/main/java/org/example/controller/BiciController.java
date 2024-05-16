@@ -37,6 +37,7 @@ public class BiciController {
         try {
             List<Bici> bicis = bicicletaDAO.getAll();
             updateBiciTable(bicis);
+            updateBiciComboBox(bicis);
         } catch (DAOException e) {
             setExcepcio(new DAOException(e.getTipo()));
         }
@@ -80,9 +81,9 @@ public class BiciController {
             Bici novaBici = new Bici(marca, model, any, pes, tipus, carboni, propietari);
             bicicletaDAO.save(novaBici);
 
-            // Actualizar la tabla después de la inserción
             List<Bici> bicis = bicicletaDAO.getAll();
             updateBiciTable(bicis);
+            updateBiciComboBox(bicis);
 
             JOptionPane.showMessageDialog(view, "Bici afegida correctament", "Afegir bici", JOptionPane.INFORMATION_MESSAGE);
 
@@ -126,6 +127,7 @@ public class BiciController {
 
                 bicicletaDAO.update(bici);
                 updateBiciTable(bicicletaDAO.getAll());
+                updateBiciComboBox(bicicletaDAO.getAll());
 
                 JOptionPane.showMessageDialog(view, "Bici modificada correctament", "Modificar bici", JOptionPane.INFORMATION_MESSAGE);
                 llimpiarDadesBici();
@@ -146,6 +148,7 @@ public class BiciController {
                     bicicletaDAO.delete(bici);
 
                     updateBiciTable(bicicletaDAO.getAll());
+                    updateBiciComboBox(bicicletaDAO.getAll());
 
                     JOptionPane.showMessageDialog(view, "Bici eliminada correctament", "Eliminar bici", JOptionPane.INFORMATION_MESSAGE);
                 } else {
@@ -164,6 +167,10 @@ public class BiciController {
         for (Bici bici : bicis) {
             model.addRow(new Object[]{bici.getMarca(), bici.getModelBici(), bici.getPes(), bici.getAnyFabricacio(), bici.getTipo(), bici.getCarboni(), bici.getPropietari(), bici});
         }
+    }
+
+    public void updateBiciComboBox(List<Bici> bicis) {
+        viewController.updateBiciComboBox(bicis);
     }
 
     private void llimpiarDadesBici() {

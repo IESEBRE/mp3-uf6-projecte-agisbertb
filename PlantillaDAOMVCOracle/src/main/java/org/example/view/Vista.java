@@ -34,10 +34,12 @@ public class Vista extends JFrame {
     private JComboBox<Bici.TipoBici> comboTipus;
     private JComboBox<Bici.Carboni> comboCarboni;
     private JComboBox<Propietari> comboPropietari;
+    private JComboBox<Bici> comboBici;
 
     private JPanel Revisions;
     private JTextField campDataRevisio;
     private JTextField campDescripcioRevisio;
+    private JTextField campPreuRevisio;
 
     // Getters
     public JTable getTaulaBicis() {
@@ -92,6 +94,10 @@ public class Vista extends JFrame {
         return comboPropietari;
     }
 
+    public JComboBox<Bici> getComboBici() {
+        return comboBici;
+    }
+
     public JTextField getCampNomPropietari() {
         return campNomPropietari;
     }
@@ -114,6 +120,10 @@ public class Vista extends JFrame {
 
     public JTextField getCampDescripcioRevisio() {
         return campDescripcioRevisio;
+    }
+
+    public JTextField getCampPreuRevisio() {
+        return campPreuRevisio;
     }
 
     public JTabbedPane getPestanyes() {
@@ -141,5 +151,6 @@ public class Vista extends JFrame {
         scrollPane1.setViewportView(taulaBicis);
         comboCarboni = new JComboBox<>(Bici.Carboni.values());
         comboTipus = new JComboBox<>(Bici.TipoBici.values());
+
     }
 }

@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.model.entities.Bici;
 import org.example.model.entities.Propietari;
 import org.example.view.ModelComponentsVisuals;
 import org.example.view.Vista;
@@ -24,11 +25,12 @@ public class ViewController {
     private void lligaVistaModel() {
         configurarTabla(view.getTaulaBicis(), modelComponentsVisuals.getModelTaulaBicis(), 7);
         configurarTabla(view.getTaulaPropietaris(), modelComponentsVisuals.getModelTaulaPropietaris(), 4);
-        configurarTabla(view.getTaulaRevisions(), modelComponentsVisuals.getModelTaulaRevisions(), 2);
+        configurarTabla(view.getTaulaRevisions(), modelComponentsVisuals.getModelTaulaRevisions(), 3);
 
         view.getComboTipus().setModel(modelComponentsVisuals.getComboBoxModelTipusBici());
         view.getComboCarboni().setModel(modelComponentsVisuals.getComboBoxModelCarboni());
         view.getComboPropietari().setModel(modelComponentsVisuals.getComboBoxModelPropietari());
+        view.getComboBici().setModel(modelComponentsVisuals.getComboBoxModelBici());
     }
 
     private void configurarTabla(JTable tabla, DefaultTableModel modelo, int columnaOculta) {
@@ -76,4 +78,13 @@ public class ViewController {
             comboBoxModel.addElement(propietari);
         }
     }
+
+    public void updateBiciComboBox(List<Bici> bicis) {
+        DefaultComboBoxModel<Bici> comboBoxModel = (DefaultComboBoxModel<Bici>) view.getComboBici().getModel();
+        comboBoxModel.removeAllElements();
+        for (Bici bici : bicis) {
+            comboBoxModel.addElement(bici);
+        }
+    }
+
 }
