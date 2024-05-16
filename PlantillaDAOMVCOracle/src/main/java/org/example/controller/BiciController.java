@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeSupport;
+import java.time.LocalDate;
 import java.util.List;
 
 public class BiciController {
@@ -84,10 +85,28 @@ public class BiciController {
         }
     }
 
+    private boolean validarBici(Bici bici) throws DAOException {
+        String regex = "^[A-ZÀ-ÚÑÇ][a-zà-úñç]*(\\s+[A-ZÀ-ÚÑÇ][a-zà-úñç]*)*$";
+
+        if (bici.getMarca() == null || bici.getMarca().trim().isEmpty() || !bici.getMarca().matches(regex)) {
+            throw new DAOException(21);
+        }
+        if (bici.getModelBici() == null || bici.getModelBici().trim().isEmpty() || !bici.getModelBici().matches(regex)) {
+            throw new DAOException(22);
+        }
+        if (bici.getAnyFabricacio() < 1990 || bici.getAnyFabricacio() > LocalDate.now().getYear()) {
+            throw new DAOException(23);
+        }
+        if (bici.getPes() <= 0) {
+            throw new DAOException(24);
+        }
+        return true;
+    }
+
     private void inserirBici() {
         try {
             Bici novaBici = getBiciDadesVista();
-            if (novaBici == null) return;
+            if (novaBici == null || !validarBici(novaBici)) return;
 
             bicicletaDAO.save(novaBici);
             updateBiciTable(bicicletaDAO.getAll());
@@ -112,7 +131,7 @@ public class BiciController {
                 Bici bici = (Bici) tableModel.getValueAt(fila, 7);
 
                 Bici biciModificada = getBiciDadesVista();
-                if (biciModificada == null) return;
+                if (biciModificada == null || !validarBici(biciModificada)) return;
 
                 bici.setMarca(biciModificada.getMarca());
                 bici.setModelBici(biciModificada.getModelBici());
@@ -135,6 +154,7 @@ public class BiciController {
             JOptionPane.showMessageDialog(view, "Format de número incorrecte", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     private void eliminarBici() {
         try {
             int fila = view.getTaulaBicis().getSelectedRow();

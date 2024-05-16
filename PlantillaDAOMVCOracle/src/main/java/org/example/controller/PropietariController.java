@@ -75,10 +75,30 @@ public class PropietariController {
         }
     }
 
+    private boolean validarPropietari(Propietari propietari) throws DAOException {
+        String regexNomCognoms = "^[A-ZÀ-ÚÑÇ][a-zà-úñç]*(\\s+[A-ZÀ-ÚÑÇ][a-zà-úñç]*)*$";
+        String regexTelefon = "^[0-9]{9}$";
+        String regexEmail = "^[A-Za-z0-9+_.-]+@(.+)$";
+
+        if (propietari.getNom() == null || propietari.getNom().trim().isEmpty() || !propietari.getNom().matches(regexNomCognoms)) {
+            throw new DAOException(11);
+        }
+        if (propietari.getCognoms() == null || propietari.getCognoms().trim().isEmpty() || !propietari.getCognoms().matches(regexNomCognoms)) {
+            throw new DAOException(12);
+        }
+        if (propietari.getTelefon() == null || propietari.getTelefon().trim().isEmpty() || !propietari.getTelefon().matches(regexTelefon)) {
+            throw new DAOException(13);
+        }
+        if (propietari.getEmail() == null || propietari.getEmail().trim().isEmpty() || !propietari.getEmail().matches(regexEmail)) {
+            throw new DAOException(14);
+        }
+        return true;
+    }
+
     private void inserirPropietari() {
         try {
             Propietari nouPropietari = getPropietariDadesVista();
-            if (nouPropietari == null) return;
+            if (nouPropietari == null || !validarPropietari(nouPropietari)) return;
 
             propietariDAO.save(nouPropietari);
             updatePropietariTable(propietariDAO.getAll());
@@ -101,7 +121,7 @@ public class PropietariController {
                 Propietari propietari = (Propietari) tableModel.getValueAt(fila, 4);
 
                 Propietari propietariModificat = getPropietariDadesVista();
-                if (propietariModificat == null) return;
+                if (propietariModificat == null || !validarPropietari(propietariModificat)) return;
 
                 propietari.setNom(propietariModificat.getNom());
                 propietari.setCognoms(propietariModificat.getCognoms());

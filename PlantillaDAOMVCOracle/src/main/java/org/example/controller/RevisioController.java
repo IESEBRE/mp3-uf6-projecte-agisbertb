@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.beans.PropertyChangeSupport;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class RevisioController {
@@ -69,20 +70,37 @@ public class RevisioController {
                 return null;
             }
 
-            LocalDate data = LocalDate.parse(dataStr);
             double preu = Double.parseDouble(preuText);
 
-            return new Revisio(data.toString(), descripcio, preu, bici);
+            return new Revisio(dataStr, descripcio, preu, bici);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(view, "Preu ha de ser un número", "Error de format", JOptionPane.ERROR_MESSAGE);
             return null;
         }
     }
 
+    private boolean validarRevisio(Revisio revisio) throws DAOException {
+        String regex = "^[A-ZÀ-ÚÑÇ][a-zà-úñç]*(\\s+[A-ZÀ-ÚÑÇ][a-zà-úñç]*)*$";
+
+        try {
+            LocalDate.parse(revisio.getData());
+        } catch (DateTimeParseException e) {
+            throw new DAOException(31);
+        }
+
+        if (revisio.getDescripcio() == null || revisio.getDescripcio().trim().isEmpty() || !revisio.getDescripcio().matches(regex)) {
+            throw new DAOException(32);
+        }
+        if (revisio.getPreu() <= 0) {
+            throw new DAOException(33);
+        }
+        return true;
+    }
+
     private void inserirRevisio() {
         try {
             Revisio novaRevisio = getRevisioDadesVista();
-            if (novaRevisio == null) return;
+            if (novaRevisio == null || !validarRevisio(novaRevisio)) return;
 
             revisioDAO.save(novaRevisio);
             updateRevisioTable(revisioDAO.getAll());
@@ -106,7 +124,7 @@ public class RevisioController {
                 Revisio revisio = (Revisio) tableModel.getValueAt(fila, 3);
 
                 Revisio revisioModificada = getRevisioDadesVista();
-                if (revisioModificada == null) return;
+                if (revisioModificada == null || !validarRevisio(revisioModificada)) return;
 
                 revisio.setData(revisioModificada.getData());
                 revisio.setDescripcio(revisioModificada.getDescripcio());
@@ -117,12 +135,13 @@ public class RevisioController {
                 updateRevisioTable(revisioDAO.getAll());
 
                 JOptionPane.showMessageDialog(view, "Revisió modificada correctament", "Modificar revisió", JOptionPane.INFORMATION_MESSAGE);
+
                 llimpiarDadesRevisio();
             }
         } catch (DAOException e) {
             setExcepcio(new DAOException(e.getTipo()));
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(view, "Format de número incorrecte", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(view, "Data en format incorrecte", "Error de format", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -132,15 +151,11 @@ public class RevisioController {
             if (fila != -1) {
                 DefaultTableModel tableModel = (DefaultTableModel) view.getTaulaRevisions().getModel();
                 Revisio revisio = (Revisio) tableModel.getValueAt(fila, 3);
-                if (revisio != null && revisio.getId() != null) {
-                    revisioDAO.delete(revisio.getId());
+                revisioDAO.delete(revisio.getId());
+                updateRevisioTable(revisioDAO.getAll());
+                llimpiarDadesRevisio();
 
-                    updateRevisioTable(revisioDAO.getAll());
-
-                    JOptionPane.showMessageDialog(view, "Revisió eliminada correctament", "Eliminar revisió", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(view, "La revisió o el seu ID és null", "Error", JOptionPane.ERROR_MESSAGE);
-                }
+                JOptionPane.showMessageDialog(view, "Revisió eliminada correctament", "Eliminar revisió", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (DAOException e) {
             setExcepcio(new DAOException(e.getTipo()));
@@ -166,7 +181,7 @@ public class RevisioController {
         int fila = view.getTaulaRevisions().getSelectedRow();
         if (fila != -1) {
             DefaultTableModel tableModel = (DefaultTableModel) view.getTaulaRevisions().getModel();
-            Revisio revisio = (Revisio) tableModel.getValueAt(fila, 3); // Ajusta el índice si es necesario
+            Revisio revisio = (Revisio) tableModel.getValueAt(fila, 3);
             view.getCampDataRevisio().setText(revisio.getData());
             view.getCampDescripcioRevisio().setText(revisio.getDescripcio());
             view.getCampPreuRevisio().setText(String.valueOf(revisio.getPreu()));
