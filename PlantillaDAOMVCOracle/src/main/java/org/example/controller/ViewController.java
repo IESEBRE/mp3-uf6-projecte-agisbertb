@@ -12,8 +12,8 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 
 public class ViewController {
-    private Vista view;
-    private ModelComponentsVisuals modelComponentsVisuals;
+    private final Vista view;
+    private final ModelComponentsVisuals modelComponentsVisuals;
 
     public ViewController(Vista view, ModelComponentsVisuals modelComponentsVisuals) {
         this.view = view;

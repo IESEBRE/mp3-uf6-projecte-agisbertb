@@ -14,10 +14,10 @@ import java.beans.PropertyChangeSupport;
 import java.util.List;
 
 public class BiciController {
-    private BiciDAOImpl bicicletaDAO;
-    private Vista view;
-    private PropertyChangeSupport propertyChangeSupport;
-    private ViewController viewController;
+    private final BiciDAOImpl bicicletaDAO;
+    private final Vista view;
+    private final PropertyChangeSupport propertyChangeSupport;
+    private final ViewController viewController;
 
     public BiciController(BiciDAOImpl bicicletaDAO, Vista view, ViewController viewController) {
         this.bicicletaDAO = bicicletaDAO;

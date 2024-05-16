@@ -12,10 +12,10 @@ import java.beans.PropertyChangeSupport;
 import java.util.List;
 
 public class PropietariController {
-    private PropietariDAOImpl propietariDAO;
-    private Vista view;
-    private PropertyChangeSupport propertyChangeSupport;
-    private ViewController viewController;
+    private final PropietariDAOImpl propietariDAO;
+    private final Vista view;
+    private final PropertyChangeSupport propertyChangeSupport;
+    private final ViewController viewController;
 
     public PropietariController(PropietariDAOImpl propietariDAO, Vista view, ViewController viewController) {
         this.propietariDAO = propietariDAO;

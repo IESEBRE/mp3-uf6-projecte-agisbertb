@@ -45,4 +45,8 @@ public class DAOException extends Exception{
     public int getTipo() {
         return tipo;
     }
+
+    public String getCodi() {
+        return missatges.get(tipo);
+    }
 }

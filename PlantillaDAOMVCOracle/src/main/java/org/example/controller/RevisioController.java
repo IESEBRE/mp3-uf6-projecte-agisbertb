@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class RevisioController {
-    private RevisioDAOImpl revisioDAO;
-    private Vista view;
-    private PropertyChangeSupport propertyChangeSupport;
-    private ViewController viewController;
+    private final RevisioDAOImpl revisioDAO;
+    private final Vista view;
+    private final PropertyChangeSupport propertyChangeSupport;
+    private final ViewController viewController;
 
     public RevisioController(RevisioDAOImpl revisioDAO, Vista view, ViewController viewController) {
         this.revisioDAO = revisioDAO;
