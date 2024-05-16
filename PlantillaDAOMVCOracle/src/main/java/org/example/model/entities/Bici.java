@@ -1,7 +1,7 @@
 package org.example.model.entities;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Bici {
 
@@ -21,7 +21,7 @@ public class Bici {
     private TipoBici tipo;
     private Carboni carboni;
     private Propietari propietari;
-    private Set<Revisio> revisions;
+    private List<Revisio> revisions;
 
     public Bici(String marca, String modelBici, int anyFabricacio, double pes, TipoBici tipo, Carboni carboni, Propietari propietari) {
         this.marca = marca;
@@ -31,7 +31,7 @@ public class Bici {
         this.tipo = tipo;
         this.carboni = carboni;
         this.propietari = propietari;
-        this.revisions = new HashSet<>();
+        this.revisions = new ArrayList<>();
     }
 
     // Getters
@@ -67,7 +67,7 @@ public class Bici {
         return propietari;
     }
 
-    public Set<Revisio> getRevisions() {
+    public List<Revisio> getRevisions() {
         return revisions;
     }
 
@@ -104,7 +104,12 @@ public class Bici {
         this.propietari = propietari;
     }
 
-    public void setRevisions(Set<Revisio> revisions) {
+    public void setRevisions(List<Revisio> revisions) {
         this.revisions = revisions;
+    }
+
+    @Override
+    public String toString() {
+        return marca + " " + modelBici;
     }
 }

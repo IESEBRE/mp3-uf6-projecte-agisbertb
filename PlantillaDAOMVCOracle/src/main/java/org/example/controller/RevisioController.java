@@ -43,7 +43,7 @@ public class RevisioController {
 
     private void initListeners() {
         viewController.addActionListener(e -> {
-            if (viewController.modeRevisio()) {  //
+            if (viewController.modeRevisio()) {
                 if (e.getSource() == view.getInsertarButton()) inserirRevisio();
                 else if (e.getSource() == view.getModificarButton()) modificarRevisio();
                 else if (e.getSource() == view.getBorrarButton()) eliminarRevisio();
@@ -57,20 +57,33 @@ public class RevisioController {
         });
     }
 
-    private void inserirRevisio() {
+    private Revisio getRevisioDadesVista() {
         try {
             String dataStr = view.getCampDataRevisio().getText().trim();
             String descripcio = view.getCampDescripcioRevisio().getText().trim();
+            String preuText = view.getCampPreuRevisio().getText().trim();
             Bici bici = (Bici) view.getComboBici().getSelectedItem();
 
-            if (dataStr.isEmpty() || descripcio.isEmpty() || bici == null) {
+            if (dataStr.isEmpty() || descripcio.isEmpty() || preuText.isEmpty() || bici == null) {
                 JOptionPane.showMessageDialog(view, "Tots els camps són obligatoris", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
+                return null;
             }
 
             LocalDate data = LocalDate.parse(dataStr);
+            double preu = Double.parseDouble(preuText);
 
-            Revisio novaRevisio = new Revisio(data.toString(), descripcio, bici.getId());
+            return new Revisio(data.toString(), descripcio, preu, bici);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(view, "Preu ha de ser un número", "Error de format", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+    }
+
+    private void inserirRevisio() {
+        try {
+            Revisio novaRevisio = getRevisioDadesVista();
+            if (novaRevisio == null) return;
+
             revisioDAO.save(novaRevisio);
             updateRevisioTable(revisioDAO.getAll());
 
@@ -90,33 +103,26 @@ public class RevisioController {
             int fila = view.getTaulaRevisions().getSelectedRow();
             if (fila != -1) {
                 DefaultTableModel tableModel = (DefaultTableModel) view.getTaulaRevisions().getModel();
-                Revisio revisio = (Revisio) tableModel.getValueAt(fila, 2);
+                Revisio revisio = (Revisio) tableModel.getValueAt(fila, 3);
 
-                String dataStr = view.getCampDataRevisio().getText().trim();
-                String descripcio = view.getCampDescripcioRevisio().getText().trim();
-                Bici bici = (Bici) view.getComboBici().getSelectedItem();
+                Revisio revisioModificada = getRevisioDadesVista();
+                if (revisioModificada == null) return;
 
-                if (dataStr.isEmpty() || descripcio.isEmpty() || bici == null) {
-                    JOptionPane.showMessageDialog(view, "Tots els camps són obligatoris", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                LocalDate data = LocalDate.parse(dataStr);
-                revisio.setData(data.toString());
-                revisio.setDescripcio(descripcio);
-                revisio.setBiciId(bici.getId());
+                revisio.setData(revisioModificada.getData());
+                revisio.setDescripcio(revisioModificada.getDescripcio());
+                revisio.setPreu(revisioModificada.getPreu());
+                revisio.setBici(revisioModificada.getBici());
 
                 revisioDAO.update(revisio);
                 updateRevisioTable(revisioDAO.getAll());
 
                 JOptionPane.showMessageDialog(view, "Revisió modificada correctament", "Modificar revisió", JOptionPane.INFORMATION_MESSAGE);
-
                 llimpiarDadesRevisio();
             }
         } catch (DAOException e) {
             setExcepcio(new DAOException(e.getTipo()));
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(view, "Data en format incorrecte", "Error de format", JOptionPane.ERROR_MESSAGE);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(view, "Format de número incorrecte", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -125,12 +131,16 @@ public class RevisioController {
             int fila = view.getTaulaRevisions().getSelectedRow();
             if (fila != -1) {
                 DefaultTableModel tableModel = (DefaultTableModel) view.getTaulaRevisions().getModel();
-                Revisio revisio = (Revisio) tableModel.getValueAt(fila, 2);
-                revisioDAO.delete(revisio.getId());
-                updateRevisioTable(revisioDAO.getAll());
-                llimpiarDadesRevisio();
+                Revisio revisio = (Revisio) tableModel.getValueAt(fila, 3);
+                if (revisio != null && revisio.getId() != null) {
+                    revisioDAO.delete(revisio.getId());
 
-                JOptionPane.showMessageDialog(view, "Revisió eliminada correctament", "Eliminar revisió", JOptionPane.INFORMATION_MESSAGE);
+                    updateRevisioTable(revisioDAO.getAll());
+
+                    JOptionPane.showMessageDialog(view, "Revisió eliminada correctament", "Eliminar revisió", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(view, "La revisió o el seu ID és null", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         } catch (DAOException e) {
             setExcepcio(new DAOException(e.getTipo()));
@@ -141,22 +151,26 @@ public class RevisioController {
         DefaultTableModel model = (DefaultTableModel) view.getTaulaRevisions().getModel();
         model.setRowCount(0);
         for (Revisio revisio : revisions) {
-            model.addRow(new Object[]{revisio.getData(), revisio.getDescripcio(), revisio});
+            model.addRow(new Object[]{revisio.getData(), revisio.getDescripcio(), revisio.getPreu(), revisio});
         }
     }
 
     private void llimpiarDadesRevisio() {
         view.getCampDataRevisio().setText("");
         view.getCampDescripcioRevisio().setText("");
+        view.getCampPreuRevisio().setText("");
+        view.getComboBici().setSelectedIndex(0);
     }
 
     private void mostrarDadesRevisio() {
         int fila = view.getTaulaRevisions().getSelectedRow();
         if (fila != -1) {
             DefaultTableModel tableModel = (DefaultTableModel) view.getTaulaRevisions().getModel();
-            Revisio revisio = (Revisio) tableModel.getValueAt(fila, 2);
-            view.getCampDataRevisio().setText(revisio.getData().toString());
+            Revisio revisio = (Revisio) tableModel.getValueAt(fila, 3); // Ajusta el índice si es necesario
+            view.getCampDataRevisio().setText(revisio.getData());
             view.getCampDescripcioRevisio().setText(revisio.getDescripcio());
+            view.getCampPreuRevisio().setText(String.valueOf(revisio.getPreu()));
+            view.getComboBici().setSelectedItem(revisio.getBici());
         }
     }
 }

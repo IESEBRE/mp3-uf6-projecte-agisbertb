@@ -7,11 +7,11 @@ import org.example.view.ModelComponentsVisuals;
 import org.example.view.Vista;
 
 public class MainController {
-    private final BiciDAOImpl bicicletaDAO;
-    private final PropietariDAOImpl propietariDAO;
-    private final RevisioDAOImpl revisioDAO;
-    private final Vista view;
-    private final ViewController viewController;
+    protected BiciDAOImpl bicicletaDAO;
+    protected PropietariDAOImpl propietariDAO;
+    protected RevisioDAOImpl revisioDAO;
+    protected Vista view;
+    protected ViewController viewController;
 
     public MainController() {
         bicicletaDAO = new BiciDAOImpl();

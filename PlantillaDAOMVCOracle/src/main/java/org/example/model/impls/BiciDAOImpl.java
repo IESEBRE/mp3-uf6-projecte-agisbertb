@@ -3,14 +3,11 @@ package org.example.model.impls;
 import org.example.model.daos.DAO;
 import org.example.model.entities.Bici;
 import org.example.model.entities.Propietari;
-import org.example.model.entities.Revisio;
 import org.example.model.exceptions.DAOException;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class BiciDAOImpl implements DAO<Bici> {
 
@@ -41,7 +38,6 @@ public class BiciDAOImpl implements DAO<Bici> {
                         Bici.Carboni.valueOf(rs.getString("carboni")),
                         getPropietari(rs.getLong("propietari_id"), con)
                 );
-                bici.setRevisions(getRevisions(rs.getLong("bici_id"), con));
             }
         } catch (SQLException throwables) {
             throw new DAOException(1);
@@ -75,8 +71,7 @@ public class BiciDAOImpl implements DAO<Bici> {
                         Bici.Carboni.valueOf(rs.getString("carboni")),
                         getPropietari(rs.getLong("propietari_id"), con)
                 );
-                bici.setId(rs.getLong("bici_id"));  // Asegurarse de establecer el ID
-                bici.setRevisions(getRevisions(rs.getLong("bici_id"), con));
+                bici.setId(rs.getLong("bici_id"));
                 bicicletes.add(bici);
             }
         } catch (SQLException throwables) {
@@ -109,7 +104,6 @@ public class BiciDAOImpl implements DAO<Bici> {
             try (ResultSet generatedKeys = st.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     bici.setId(generatedKeys.getLong(1));
-                    saveRevisions(bici.getId(), bici.getRevisions(), con);
                 } else {
                     throw new DAOException(1, "Failed to retrieve generated key.");
                 }
@@ -143,13 +137,10 @@ public class BiciDAOImpl implements DAO<Bici> {
             if (affectedRows == 0) {
                 throw new DAOException(1, "No s'ha actualitzat cap fila");
             }
-
-            updateRevisions(bici.getId(), bici.getRevisions(), con);
         } catch (SQLException throwables) {
             throw new DAOException(1, throwables.getMessage());
         }
     }
-
 
     @Override
     public void delete(Long id) throws DAOException {
@@ -174,8 +165,6 @@ public class BiciDAOImpl implements DAO<Bici> {
         delete(bici.getId());
     }
 
-
-
     private Propietari getPropietari(Long propietariId, Connection con) throws SQLException {
         if (propietariId == null) return null;
         Propietari propietari = null;
@@ -193,43 +182,5 @@ public class BiciDAOImpl implements DAO<Bici> {
             }
         }
         return propietari;
-    }
-
-    private Set<Revisio> getRevisions(Long biciId, Connection con) throws SQLException {
-//        Set<Revisio> revisions = new HashSet<>();
-//        try (PreparedStatement st = con.prepareStatement("SELECT * FROM Revisions WHERE bici_id = ?")) {
-//            st.setLong(1, biciId);
-//            try (ResultSet rs = st.executeQuery()) {
-//                while (rs.next()) {
-//                    revisions.add(new Revisio(
-//                            rs.getLong("revisio_id"),
-//                            rs.getDate("data").toLocalDate(),
-//                            rs.getString("descripcio"),
-//                            rs.getLong("bici_id")
-//                    ));
-//                }
-//            }
-//        }
-        return null;
-    }
-
-    private void saveRevisions(Long biciId, Set<Revisio> revisions, Connection con) throws SQLException {
-//        for (Revisio revisio : revisions) {
-//            try (PreparedStatement st = con.prepareStatement(
-//                    "INSERT INTO Revisions (data, descripcio, bici_id) VALUES (?, ?, ?)")) {
-//                st.setDate(1, Date.valueOf(revisio.getData()));
-//                st.setString(2, revisio.getDescripcio());
-//                st.setLong(3, biciId);
-//                st.executeUpdate();
-//            }
-//        }
-    }
-
-    private void updateRevisions(Long biciId, Set<Revisio> revisions, Connection con) throws SQLException {
-//        try (PreparedStatement st = con.prepareStatement("DELETE FROM Revisions WHERE bici_id = ?")) {
-//            st.setLong(1, biciId);
-//            st.executeUpdate();
-//        }
-//        saveRevisions(biciId, revisions, con);
     }
 }

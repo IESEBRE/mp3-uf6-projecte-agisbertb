@@ -89,7 +89,6 @@ public class PropietariDAOImpl implements DAO<Propietari> {
                 throw new DAOException(1);
             }
 
-            // Recupera l'ID generat
             try (ResultSet generatedKeys = st.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     propietari.setId(generatedKeys.getLong(1));
@@ -135,9 +134,5 @@ public class PropietariDAOImpl implements DAO<Propietari> {
             System.err.println("SQL Error: " + e.getMessage());
             throw new DAOException(1, e.getMessage());
         }
-    }
-
-    public void delete(Propietari propietari) throws DAOException {
-        delete(propietari.getId());
     }
 }

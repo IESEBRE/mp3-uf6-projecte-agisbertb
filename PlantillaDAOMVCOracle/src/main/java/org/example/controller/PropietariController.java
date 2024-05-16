@@ -7,7 +7,6 @@ import org.example.view.Vista;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
 
@@ -42,15 +41,14 @@ public class PropietariController {
     }
 
     private void initListeners() {
-        ActionListener actionListener = e -> {
+        viewController.addActionListener(e -> {
             if (viewController.modePropietari()) {
                 if (e.getSource() == view.getInsertarButton()) inserirPropietari();
                 else if (e.getSource() == view.getModificarButton()) modificarPropietari();
                 else if (e.getSource() == view.getBorrarButton()) eliminarPropietari();
             }
-        };
+        });
 
-        viewController.addActionListener(actionListener);
         viewController.addListSelectionListenerToPropietaris(e -> {
             if (!e.getValueIsAdjusting() && viewController.modePropietari()) {
                 mostrarDadesPropietari();
@@ -58,7 +56,7 @@ public class PropietariController {
         });
     }
 
-    private void inserirPropietari() {
+    private Propietari getPropietariDadesVista() {
         try {
             String nom = view.getCampNomPropietari().getText().trim();
             String cognoms = view.getCampCognomsPropietari().getText().trim();
@@ -67,14 +65,24 @@ public class PropietariController {
 
             if (nom.isEmpty() || cognoms.isEmpty() || telefon.isEmpty() || email.isEmpty()) {
                 JOptionPane.showMessageDialog(view, "Tots els camps són obligatoris", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
+                return null;
             }
 
-            Propietari nouPropietari = new Propietari(nom, cognoms, telefon, email);
+            return new Propietari(nom, cognoms, telefon, email);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(view, "Error al llegir les dades", "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+    }
+
+    private void inserirPropietari() {
+        try {
+            Propietari nouPropietari = getPropietariDadesVista();
+            if (nouPropietari == null) return;
+
             propietariDAO.save(nouPropietari);
-            List<Propietari> propietaris = propietariDAO.getAll();
-            updatePropietariTable(propietaris);
-            updatePropietariComboBox(propietaris);
+            updatePropietariTable(propietariDAO.getAll());
+            updatePropietariComboBox(propietariDAO.getAll());
 
             JOptionPane.showMessageDialog(view, "Propietari afegit correctament", "Afegir propietari", JOptionPane.INFORMATION_MESSAGE);
 
@@ -92,25 +100,17 @@ public class PropietariController {
                 DefaultTableModel tableModel = (DefaultTableModel) view.getTaulaPropietaris().getModel();
                 Propietari propietari = (Propietari) tableModel.getValueAt(fila, 4);
 
-                String nom = view.getCampNomPropietari().getText().trim();
-                String cognoms = view.getCampCognomsPropietari().getText().trim();
-                String telefon = view.getCampTelefonPropietari().getText().trim();
-                String email = view.getCampEmailPropietari().getText().trim();
+                Propietari propietariModificat = getPropietariDadesVista();
+                if (propietariModificat == null) return;
 
-                if (nom.isEmpty() || cognoms.isEmpty() || telefon.isEmpty() || email.isEmpty()) {
-                    JOptionPane.showMessageDialog(view, "Tots els camps són obligatoris", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                propietari.setNom(nom);
-                propietari.setCognoms(cognoms);
-                propietari.setTelefon(telefon);
-                propietari.setEmail(email);
+                propietari.setNom(propietariModificat.getNom());
+                propietari.setCognoms(propietariModificat.getCognoms());
+                propietari.setTelefon(propietariModificat.getTelefon());
+                propietari.setEmail(propietariModificat.getEmail());
 
                 propietariDAO.update(propietari);
-                List<Propietari> propietaris = propietariDAO.getAll();
-                updatePropietariTable(propietaris);
-                updatePropietariComboBox(propietaris);
+                updatePropietariTable(propietariDAO.getAll());
+                updatePropietariComboBox(propietariDAO.getAll());
 
                 JOptionPane.showMessageDialog(view, "Propietari modificat correctament", "Modificar propietari", JOptionPane.INFORMATION_MESSAGE);
 
@@ -127,10 +127,10 @@ public class PropietariController {
             if (fila != -1) {
                 DefaultTableModel tableModel = (DefaultTableModel) view.getTaulaPropietaris().getModel();
                 Propietari propietari = (Propietari) tableModel.getValueAt(fila, 4);
-                propietariDAO.delete(propietari);
-                List<Propietari> propietaris = propietariDAO.getAll();
-                updatePropietariTable(propietaris);
-                updatePropietariComboBox(propietaris);
+                propietariDAO.delete(propietari.getId());
+
+                updatePropietariTable(propietariDAO.getAll());
+                updatePropietariComboBox(propietariDAO.getAll());
 
                 JOptionPane.showMessageDialog(view, "Propietari eliminat correctament", "Eliminar propietari", JOptionPane.INFORMATION_MESSAGE);
             }

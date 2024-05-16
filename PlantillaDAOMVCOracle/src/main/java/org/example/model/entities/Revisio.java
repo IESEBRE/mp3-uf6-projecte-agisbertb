@@ -4,12 +4,14 @@ public class Revisio {
     private Long id;
     private String data;
     private String descripcio;
-    private Long biciId;
+    private double preu;
+    private Bici bici;
 
-    public Revisio(String data, String descripcio, Long biciId) {
+    public Revisio(String data, String descripcio, double preu, Bici bici) {
         this.data = data;
         this.descripcio = descripcio;
-        this.biciId = biciId;
+        this.preu = preu;
+        this.bici = bici;
     }
 
     // Getters i setters
@@ -37,11 +39,24 @@ public class Revisio {
         this.descripcio = descripcio;
     }
 
-    public Long getBiciId() {
-        return biciId;
+    public double getPreu() {
+        return preu;
     }
 
-    public void setBiciId(Long biciId) {
-        this.biciId = biciId;
+    public void setPreu(double preu) {
+        this.preu = preu;
+    }
+
+    public Bici getBici() {
+        return bici;
+    }
+
+    public void setBici(Bici bici) {
+        this.bici = bici;
+    }
+
+    @Override
+    public String toString() {
+        return bici.toString();
     }
 }

@@ -75,7 +75,7 @@ public class ModelComponentsVisuals {
     }
 
     private void initializeRevisioModel() {
-        modelTaulaRevisions = new DefaultTableModel(new Object[]{"Data", "Descripcio", "Bici" ,"Object"}, 0) {
+        modelTaulaRevisions = new DefaultTableModel(new Object[]{"Data", "Descripcio","Preu", "Bici" ,"Object"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -86,19 +86,12 @@ public class ModelComponentsVisuals {
                 switch (column) {
                     case 0: return LocalDate.class;
                     case 1: return String.class;
-                    case 2: return Bici.class;
+                    case 2: return Double.class;
+                    case 3: return Bici.class;
                     default: return Object.class;
                 }
             }
         };
-    }
-
-    // Método para actualizar el ComboBoxModel con la lista de propietarios
-    public void setPropietarisComboBoxModel(List<Propietari> propietaris) {
-        comboBoxModelPropietari.removeAllElements();
-        for (Propietari propietari : propietaris) {
-            comboBoxModelPropietari.addElement(propietari);
-        }
     }
 
     // Getters

@@ -25,7 +25,7 @@ public class ViewController {
     private void lligaVistaModel() {
         configurarTabla(view.getTaulaBicis(), modelComponentsVisuals.getModelTaulaBicis(), 7);
         configurarTabla(view.getTaulaPropietaris(), modelComponentsVisuals.getModelTaulaPropietaris(), 4);
-        configurarTabla(view.getTaulaRevisions(), modelComponentsVisuals.getModelTaulaRevisions(), 3);
+        configurarTabla(view.getTaulaRevisions(), modelComponentsVisuals.getModelTaulaRevisions(), 4);
 
         view.getComboTipus().setModel(modelComponentsVisuals.getComboBoxModelTipusBici());
         view.getComboCarboni().setModel(modelComponentsVisuals.getComboBoxModelCarboni());
