@@ -25,19 +25,19 @@ public class DAOException extends Exception {
 
         // Missatges de validació
 
-        missatges.put(11,"Nom no vàlid");
-        missatges.put(12,"Cognoms no vàlids");
-        missatges.put(13,"Telèfon no vàlid");
-        missatges.put(14,"Email no vàlid");
+        missatges.put(11,"Nom no vàlid! Ha de començar per majúscula i seguir amb minúscules, sense números ni caràcters especials.");
+        missatges.put(12,"Cognoms no vàlids! Ha de començar per majúscula i seguir amb minúscules, sense números ni caràcters especials.");
+        missatges.put(13,"Telèfon no vàlid! Ha de començar per 6 o 9 i seguir amb 8 dígits més.");
+        missatges.put(14,"Email no vàlid! Ha de tenir un format vàlid (propietari@example.com)");
 
-        missatges.put(21, "La marca de la bicicleta és invàlida");
-        missatges.put(22, "El model de la bicicleta és invàlid");
-        missatges.put(23, "L'any de la bicicleta és invàlid");
-        missatges.put(24, "El pes de la bicicleta és invàlid");
+        missatges.put(21, "La marca de la bicicleta és invàlida! Ha de començar per majúscula i seguir amb minúscules, sense números ni caràcters especials.");
+        missatges.put(22, "El model de la bicicleta és invàlid! Ha de començar per majúscula i seguir amb minúscules, sense números ni caràcters especials.");
+        missatges.put(23, "L'any de la bicicleta és invàlid! Ha de ser entre 1990 i l'any actual.");
+        missatges.put(24, "El pes de la bicicleta és invàlid! Ha de ser un valor positiu.");
 
-        missatges.put(31, "La data de la revisió és invàlida");
-        missatges.put(32, "La descripció de la revisió és invàlida");
-        missatges.put(33, "El preu de la revisió és invàlid");
+        missatges.put(31, "La data de la revisió és invàlida! El format correcte és yyyy-MM-dd");
+        missatges.put(32, "La descripció de la revisió és invàlida! Ha de començar per majúscula i seguir amb minúscules.");
+        missatges.put(33, "El preu de la revisió és invàlid! Ha de ser un valor positiu.");
     }
 
     private int tipo;

@@ -4,16 +4,13 @@ import org.example.model.daos.DAO;
 import org.example.model.entities.Bici;
 import org.example.model.entities.Propietari;
 import org.example.model.exceptions.DAOException;
+import org.example.utils.DBUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BiciDAOImpl implements DAO<Bici> {
-
-    private static final String DB_URL = "jdbc:oracle:thin:@//localhost:1521/xe";
-    private static final String DB_USER = "C##HR";
-    private static final String DB_PASSWORD = "HR";
 
     @Override
     public Bici get(Long id) throws DAOException {
@@ -23,7 +20,7 @@ public class BiciDAOImpl implements DAO<Bici> {
         Bici bici = null;
 
         try {
-            con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            con = DBUtil.getConnection();
             st = con.prepareStatement("SELECT * FROM Bicicletes WHERE bici_id = ?");
             st.setLong(1, id);
             rs = st.executeQuery();
@@ -57,7 +54,7 @@ public class BiciDAOImpl implements DAO<Bici> {
     public List<Bici> getAll() throws DAOException {
         List<Bici> bicicletes = new ArrayList<>();
 
-        try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection con = DBUtil.getConnection();
              PreparedStatement st = con.prepareStatement("SELECT * FROM Bicicletes");
              ResultSet rs = st.executeQuery()) {
 
@@ -83,7 +80,7 @@ public class BiciDAOImpl implements DAO<Bici> {
 
     @Override
     public void save(Bici bici) throws DAOException {
-        try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection con = DBUtil.getConnection();
              PreparedStatement st = con.prepareStatement(
                      "INSERT INTO Bicicletes (marca, model, any_fabricacio, pes, tipus, carboni, propietari_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
                      new String[] { "bici_id" })) {
@@ -120,7 +117,7 @@ public class BiciDAOImpl implements DAO<Bici> {
             throw new DAOException(1, "La bici o el seu ID és null");
         }
 
-        try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection con = DBUtil.getConnection();
              PreparedStatement st = con.prepareStatement(
                      "UPDATE Bicicletes SET marca = ?, model = ?, any_fabricacio = ?, pes = ?, tipus = ?, carboni = ?, propietari_id = ? WHERE bici_id = ?")) {
 
@@ -148,7 +145,7 @@ public class BiciDAOImpl implements DAO<Bici> {
             throw new DAOException(1, "L'ID de la bici és null.");
         }
 
-        try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection con = DBUtil.getConnection();
              PreparedStatement st = con.prepareStatement("DELETE FROM Bicicletes WHERE bici_id = ?")) {
 
             st.setLong(1, id);

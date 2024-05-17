@@ -3,16 +3,13 @@ package org.example.model.impls;
 import org.example.model.daos.DAO;
 import org.example.model.entities.Propietari;
 import org.example.model.exceptions.DAOException;
+import org.example.utils.DBUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PropietariDAOImpl implements DAO<Propietari> {
-
-    private static final String DB_URL = "jdbc:oracle:thin:@//localhost:1521/xe";
-    private static final String DB_USER = "C##HR";
-    private static final String DB_PASSWORD = "HR";
 
     @Override
     public Propietari get(Long id) throws DAOException {
@@ -22,7 +19,7 @@ public class PropietariDAOImpl implements DAO<Propietari> {
         Propietari propietari = null;
 
         try {
-            con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            con = DBUtil.getConnection();
             st = con.prepareStatement("SELECT * FROM Propietaris WHERE propietari_id = ?");
             st.setLong(1, id);
             rs = st.executeQuery();
@@ -54,7 +51,7 @@ public class PropietariDAOImpl implements DAO<Propietari> {
     public List<Propietari> getAll() throws DAOException {
         List<Propietari> propietaris = new ArrayList<>();
 
-        try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection con = DBUtil.getConnection();
              PreparedStatement st = con.prepareStatement("SELECT * FROM Propietaris");
              ResultSet rs = st.executeQuery()) {
 
@@ -76,7 +73,7 @@ public class PropietariDAOImpl implements DAO<Propietari> {
     @Override
     public void save(Propietari propietari) throws DAOException {
         String insertSQL = "INSERT INTO Propietaris (nom, cognoms, telefon, email) VALUES (?, ?, ?, ?)";
-        try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection con = DBUtil.getConnection();
              PreparedStatement st = con.prepareStatement(insertSQL, new String[] { "propietari_id" })) {
 
             st.setString(1, propietari.getNom());
@@ -106,7 +103,7 @@ public class PropietariDAOImpl implements DAO<Propietari> {
     @Override
     public void update(Propietari propietari) throws DAOException {
         String updateSQL = "UPDATE Propietaris SET nom = ?, cognoms = ?, telefon = ?, email = ? WHERE propietari_id = ?";
-        try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection con = DBUtil.getConnection();
              PreparedStatement st = con.prepareStatement(updateSQL)) {
 
             st.setString(1, propietari.getNom());
@@ -125,7 +122,7 @@ public class PropietariDAOImpl implements DAO<Propietari> {
     @Override
     public void delete(Long id) throws DAOException {
         String deleteSQL = "DELETE FROM Propietaris WHERE propietari_id = ?";
-        try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection con = DBUtil.getConnection();
              PreparedStatement st = con.prepareStatement(deleteSQL)) {
 
             st.setLong(1, id);

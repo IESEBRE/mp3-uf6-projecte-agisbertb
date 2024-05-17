@@ -4,16 +4,13 @@ import org.example.model.daos.DAO;
 import org.example.model.entities.Bici;
 import org.example.model.entities.Revisio;
 import org.example.model.exceptions.DAOException;
+import org.example.utils.DBUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RevisioDAOImpl implements DAO<Revisio> {
-
-    private static final String DB_URL = "jdbc:oracle:thin:@//localhost:1521/xe";
-    private static final String DB_USER = "C##HR";
-    private static final String DB_PASSWORD = "HR";
 
     @Override
     public Revisio get(Long id) throws DAOException {
@@ -23,7 +20,7 @@ public class RevisioDAOImpl implements DAO<Revisio> {
         Revisio revisio = null;
 
         try {
-            con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            con = DBUtil.getConnection();
             st = con.prepareStatement("SELECT * FROM Revisions WHERE revisio_id = ?");
             st.setLong(1, id);
             rs = st.executeQuery();
@@ -56,7 +53,7 @@ public class RevisioDAOImpl implements DAO<Revisio> {
     public List<Revisio> getAll() throws DAOException {
         List<Revisio> revisions = new ArrayList<>();
 
-        try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection con = DBUtil.getConnection();
              PreparedStatement st = con.prepareStatement("SELECT * FROM Revisions");
              ResultSet rs = st.executeQuery()) {
 
@@ -79,7 +76,7 @@ public class RevisioDAOImpl implements DAO<Revisio> {
 
     @Override
     public void save(Revisio revisio) throws DAOException {
-        try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection con = DBUtil.getConnection();
              PreparedStatement st = con.prepareStatement(
                      "INSERT INTO Revisions (data, descripcio, preu, bici_id) VALUES (?, ?, ?, ?)",
                      new String[] { "revisio_id" })) {
@@ -112,7 +109,7 @@ public class RevisioDAOImpl implements DAO<Revisio> {
             throw new DAOException(1, "La revisió o el seu ID és null");
         }
 
-        try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection con = DBUtil.getConnection();
              PreparedStatement st = con.prepareStatement(
                      "UPDATE Revisions SET data = ?, descripcio = ?, preu = ?, bici_id = ? WHERE revisio_id = ?")) {
 
@@ -137,7 +134,7 @@ public class RevisioDAOImpl implements DAO<Revisio> {
             throw new DAOException(1, "L'ID de la revisió és null.");
         }
 
-        try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection con = DBUtil.getConnection();
              PreparedStatement st = con.prepareStatement("DELETE FROM Revisions WHERE revisio_id = ?")) {
 
             st.setLong(1, id);
