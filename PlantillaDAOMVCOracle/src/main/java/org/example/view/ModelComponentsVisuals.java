@@ -7,7 +7,11 @@ import org.example.model.entities.Revisio;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.time.LocalDate;
-import java.util.List;
+
+/**
+ * Gestiona els models de dades per als components de la interfície gràfica com taules i comboBoxes.
+ * Aquesta classe inicialitza i proporciona els models per a les dades mostrades en les interfícies d'usuari.
+ */
 
 public class ModelComponentsVisuals {
 
@@ -20,6 +24,10 @@ public class ModelComponentsVisuals {
     private DefaultComboBoxModel<Propietari> comboBoxModelPropietari;
     private DefaultComboBoxModel<Bici> comboBoxModelBici;
 
+    /**
+     * Constructor que inicialitza els models per a les taules i comboBoxes.
+     */
+
     public ModelComponentsVisuals() {
         initializeBiciModel();
         initializePropietariModel();
@@ -30,6 +38,10 @@ public class ModelComponentsVisuals {
         comboBoxModelPropietari = new DefaultComboBoxModel<>();
         comboBoxModelBici = new DefaultComboBoxModel<>();
     }
+
+    /**
+     * Inicialitza el model de taula per a bicicletes, especificant les columnes i tipus de dades.
+     */
 
     private void initializeBiciModel() {
         modelTaulaBicis = new DefaultTableModel(new Object[]{"Marca", "Model", "Pes", "Any", "Tipus", "Carboni", "Propietari", "Object"}, 0) {
@@ -54,6 +66,10 @@ public class ModelComponentsVisuals {
         };
     }
 
+    /**
+     * Inicialitza el model de taula per a propietaris, definint les columnes i configurant la no edició.
+     */
+
     private void initializePropietariModel() {
         modelTaulaPropietaris = new DefaultTableModel(new Object[]{"Nom", "Cognom", "Telefon", "Email", "Object"}, 0) {
             @Override
@@ -73,6 +89,10 @@ public class ModelComponentsVisuals {
             }
         };
     }
+
+    /**
+     * Inicialitza el model de taula per a revisions, establint columnes i restringint l'edició.
+     */
 
     private void initializeRevisioModel() {
         modelTaulaRevisions = new DefaultTableModel(new Object[]{"Data", "Descripcio","Preu", "Bici" ,"Object"}, 0) {
@@ -95,6 +115,7 @@ public class ModelComponentsVisuals {
     }
 
     // Getters
+
     public DefaultTableModel getModelTaulaBicis() {
         return modelTaulaBicis;
     }

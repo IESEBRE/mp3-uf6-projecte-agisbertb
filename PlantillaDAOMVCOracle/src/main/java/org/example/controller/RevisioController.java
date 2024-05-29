@@ -5,7 +5,6 @@ import org.example.model.entities.Revisio;
 import org.example.model.exceptions.DAOException;
 import org.example.model.impls.RevisioDAOImpl;
 import org.example.view.Vista;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.beans.PropertyChangeSupport;
@@ -13,11 +12,33 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+/**
+ * Controlador per a la gestió de revisions de bicicletes.
+ *
+ * Aquest controlador s'encarrega de la gestió de revisions, incloent la creació,
+ * modificació i eliminació de revisions, així com la interacció amb la vista
+ * associada i la gestió d'excepcions.
+ *
+ * @author Andreu Gisbert Bel
+ * @version 1.0
+ */
+
 public class RevisioController {
     private final RevisioDAOImpl revisioDAO;
     private final Vista view;
     private final PropertyChangeSupport propertyChangeSupport;
     private final ViewController viewController;
+
+    /**
+     * Constructor del controlador de revisions.
+     *
+     * Inicialitza les dependències necessàries, configura els escoltadors d'esdeveniments
+     * i inicialitza la vista.
+     *
+     * @param revisioDAO Implementació del DAO per a revisions
+     * @param view Vista associada a aquest controlador
+     * @param viewController Controlador de la vista principal
+     */
 
     public RevisioController(RevisioDAOImpl revisioDAO, Vista view, ViewController viewController) {
         this.revisioDAO = revisioDAO;
@@ -33,6 +54,10 @@ public class RevisioController {
         propertyChangeSupport.firePropertyChange(ExceptionController.PROP_EXCEPCIO, null, excepcio);
     }
 
+    /**
+     * Inicialitza la vista carregant les dades de revisions i configurant components.
+     */
+
     private void initView() {
         try {
             List<Revisio> revisions = revisioDAO.getAll();
@@ -41,6 +66,10 @@ public class RevisioController {
             setExcepcio(new DAOException(e.getTipo()));
         }
     }
+
+    /**
+     * Configura els escoltadors d'esdeveniments per la interfície d'usuari.
+     */
 
     private void initListeners() {
         viewController.addActionListener(e -> {
@@ -57,6 +86,12 @@ public class RevisioController {
             }
         });
     }
+
+    /**
+     * Recupera les dades d'una revisió des de la vista.
+     *
+     * @return Revisio amb les dades provinents dels camps de la vista o null si hi ha errors
+     */
 
     private Revisio getRevisioDadesVista() {
         try {
@@ -79,6 +114,14 @@ public class RevisioController {
         }
     }
 
+    /**
+     * Valida les dades d'una revisió abans de la seva inserció o modificació.
+     *
+     * @param revisio Revisio a validar
+     * @return true si la revisió és vàlida, false en cas contrari
+     * @throws DAOException si hi ha un error de validació
+     */
+
     private boolean validarRevisio(Revisio revisio) throws DAOException {
         String regex = "^[A-ZÀ-ÚÑÇ][a-zà-úñç]*(\\s+[A-ZÀ-ÚÑÇ][a-zà-úñç]*)*$";
 
@@ -96,6 +139,10 @@ public class RevisioController {
         }
         return true;
     }
+
+    /**
+     * Insereix una nova revisió a la base de dades.
+     */
 
     private void inserirRevisio() {
         try {
@@ -115,6 +162,10 @@ public class RevisioController {
             JOptionPane.showMessageDialog(view, "Data en format incorrecte", "Error de format", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    /**
+     * Modifica una revisió existent.
+     */
 
     private void modificarRevisio() {
         try {
@@ -145,6 +196,10 @@ public class RevisioController {
         }
     }
 
+    /**
+     * Elimina una revisió de la base de dades.
+     */
+
     private void eliminarRevisio() {
         try {
             int fila = view.getTaulaRevisions().getSelectedRow();
@@ -162,6 +217,12 @@ public class RevisioController {
         }
     }
 
+    /**
+     * Actualitza la taula de revisions amb les dades actuals.
+     *
+     * @param revisions Llista de revisions per mostrar a la taula
+     */
+
     public void updateRevisioTable(List<Revisio> revisions) {
         DefaultTableModel model = (DefaultTableModel) view.getTaulaRevisions().getModel();
         model.setRowCount(0);
@@ -170,12 +231,20 @@ public class RevisioController {
         }
     }
 
+    /**
+     * Neteja els camps de dades de la revisió a la vista.
+     */
+
     private void llimpiarDadesRevisio() {
         view.getCampDataRevisio().setText("");
         view.getCampDescripcioRevisio().setText("");
         view.getCampPreuRevisio().setText("");
         view.getComboBici().setSelectedIndex(0);
     }
+
+    /**
+     * Mostra les dades d'una revisió seleccionada a la taula.
+     */
 
     private void mostrarDadesRevisio() {
         int fila = view.getTaulaRevisions().getSelectedRow();

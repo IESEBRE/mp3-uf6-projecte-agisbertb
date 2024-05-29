@@ -5,12 +5,24 @@ import org.example.model.entities.Bici;
 import org.example.model.entities.Propietari;
 import org.example.model.exceptions.DAOException;
 import org.example.utils.DBUtil;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementació de l'interfície DAO per a objectes Bici.
+ * Proporciona la gestió de persistència per a objectes Bici a la base de dades.
+ */
+
 public class BiciDAOImpl implements DAO<Bici> {
+
+    /**
+     * Recupera una bicicleta pel seu ID.
+     *
+     * @param id El ID de la bicicleta a recuperar.
+     * @return La bicicleta si es troba, o null si no es troba.
+     * @throws DAOException si ocorre un error de base de dades.
+     */
 
     @Override
     public Bici get(Long id) throws DAOException {
@@ -50,6 +62,13 @@ public class BiciDAOImpl implements DAO<Bici> {
         return bici;
     }
 
+    /**
+     * Recupera totes les bicicletes de la base de dades.
+     *
+     * @return Una llista de totes les bicicletes.
+     * @throws DAOException si ocorre un error de base de dades.
+     */
+
     @Override
     public List<Bici> getAll() throws DAOException {
         List<Bici> bicicletes = new ArrayList<>();
@@ -77,6 +96,12 @@ public class BiciDAOImpl implements DAO<Bici> {
         return bicicletes;
     }
 
+    /**
+     * Guarda una nova bicicleta a la base de dades.
+     *
+     * @param bici La bicicleta a guardar.
+     * @throws DAOException si ocorre un error de base de dades o si no es pot guardar.
+     */
 
     @Override
     public void save(Bici bici) throws DAOException {
@@ -110,6 +135,12 @@ public class BiciDAOImpl implements DAO<Bici> {
         }
     }
 
+    /**
+     * Actualitza una bicicleta existent a la base de dades.
+     *
+     * @param bici La bicicleta a actualitzar.
+     * @throws DAOException si la bicicleta és null, el seu ID és null, o si ocorre un error de base de dades.
+     */
 
     @Override
     public void update(Bici bici) throws DAOException {
@@ -139,6 +170,13 @@ public class BiciDAOImpl implements DAO<Bici> {
         }
     }
 
+    /**
+     * Elimina una bicicleta de la base de dades pel seu ID.
+     *
+     * @param id El ID de la bicicleta a eliminar.
+     * @throws DAOException si l'ID és null o si ocorre un error de base de dades.
+     */
+
     @Override
     public void delete(Long id) throws DAOException {
         if (id == null) {
@@ -154,6 +192,13 @@ public class BiciDAOImpl implements DAO<Bici> {
             throw new DAOException(1, throwables.getMessage());
         }
     }
+
+    /**
+     * Elimina una bicicleta de la base de dades.
+     *
+     * @param bici La bicicleta a eliminar.
+     * @throws DAOException si la bicicleta és null o si ocorre un error de base de dades.
+     */
 
     public void delete(Bici bici) throws DAOException {
         if (bici == null) {

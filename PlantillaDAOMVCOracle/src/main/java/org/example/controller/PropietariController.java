@@ -4,17 +4,38 @@ import org.example.model.entities.Propietari;
 import org.example.model.exceptions.DAOException;
 import org.example.model.impls.PropietariDAOImpl;
 import org.example.view.Vista;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
+
+/**
+ * Controlador per a la gestió de propietaris.
+ *
+ * Aquest controlador s'encarrega de la gestió de propietaris, incloent la creació,
+ * modificació i eliminació de propietaris, així com la interacció amb la vista
+ * associada i la gestió d'excepcions.
+ *
+ * @author Andreu Gisbert Bel
+ * @version 1.0
+ */
 
 public class PropietariController {
     private final PropietariDAOImpl propietariDAO;
     private final Vista view;
     private final PropertyChangeSupport propertyChangeSupport;
     private final ViewController viewController;
+
+    /**
+     * Constructor del controlador de propietaris.
+     *
+     * Inicialitza les dependències necessàries, configura els escoltadors d'esdeveniments
+     * i inicialitza la vista.
+     *
+     * @param propietariDAO Implementació del DAO per a propietaris
+     * @param view Vista associada a aquest controlador
+     * @param viewController Controlador de la vista principal
+     */
 
     public PropietariController(PropietariDAOImpl propietariDAO, Vista view, ViewController viewController) {
         this.propietariDAO = propietariDAO;
@@ -30,6 +51,10 @@ public class PropietariController {
         propertyChangeSupport.firePropertyChange(ExceptionController.PROP_EXCEPCIO, null, excepcio);
     }
 
+    /**
+     * Inicialitza la vista carregant les dades de propietaris i configurant components.
+     */
+
     private void initView() {
         try {
             List<Propietari> propietaris = propietariDAO.getAll();
@@ -39,6 +64,10 @@ public class PropietariController {
             setExcepcio(new DAOException(e.getTipo()));
         }
     }
+
+    /**
+     * Configura els escoltadors d'esdeveniments per la interfície d'usuari.
+     */
 
     private void initListeners() {
         viewController.addActionListener(e -> {
@@ -55,6 +84,12 @@ public class PropietariController {
             }
         });
     }
+
+    /**
+     * Recupera les dades d'un propietari des de la vista.
+     *
+     * @return Propietari amb les dades provinents dels camps de la vista o null si hi ha errors
+     */
 
     private Propietari getPropietariDadesVista() {
         try {
@@ -74,6 +109,14 @@ public class PropietariController {
             return null;
         }
     }
+
+    /**
+     * Valida les dades d'un propietari abans de la seva inserció o modificació.
+     *
+     * @param propietari Propietari a validar
+     * @return true si el propietari és vàlid, false en cas contrari
+     * @throws DAOException si hi ha un error de validació
+     */
 
     private boolean validarPropietari(Propietari propietari) throws DAOException {
         String regexNomCognoms = "^[A-ZÀ-ÚÑÇ][a-zà-úñç]*(\\s+[A-ZÀ-ÚÑÇ][a-zà-úñç]*)*$";
@@ -95,6 +138,10 @@ public class PropietariController {
         return true;
     }
 
+    /**
+     * Insereix un nou propietari a la base de dades.
+     */
+
     private void inserirPropietari() {
         try {
             Propietari nouPropietari = getPropietariDadesVista();
@@ -112,6 +159,10 @@ public class PropietariController {
             setExcepcio(new DAOException(e.getTipo()));
         }
     }
+
+    /**
+     * Modifica un propietari existent.
+     */
 
     private void modificarPropietari() {
         try {
@@ -141,6 +192,10 @@ public class PropietariController {
         }
     }
 
+    /**
+     * Elimina un propietari de la base de dades.
+     */
+
     private void eliminarPropietari() {
         try {
             int fila = view.getTaulaPropietaris().getSelectedRow();
@@ -159,6 +214,12 @@ public class PropietariController {
         }
     }
 
+    /**
+     * Actualitza la taula de propietaris amb les dades actuals.
+     *
+     * @param propietaris Llista de propietaris per mostrar a la taula
+     */
+
     public void updatePropietariTable(List<Propietari> propietaris) {
         DefaultTableModel model = (DefaultTableModel) view.getTaulaPropietaris().getModel();
         model.setRowCount(0);
@@ -167,9 +228,19 @@ public class PropietariController {
         }
     }
 
+    /**
+     * Actualitza la taula de propietaris amb les dades actuals.
+     *
+     * @param propietaris Llista de propietaris per mostrar a la taula
+     */
+
     public void updatePropietariComboBox(List<Propietari> propietaris) {
         viewController.updatePropietariComboBox(propietaris);
     }
+
+    /**
+     * Neteja els camps de dades del propietari a la vista.
+     */
 
     private void llimpiarDadesPropietari() {
         view.getCampNomPropietari().setText("");
@@ -177,6 +248,10 @@ public class PropietariController {
         view.getCampTelefonPropietari().setText("");
         view.getCampEmailPropietari().setText("");
     }
+
+    /**
+     * Mostra les dades d'un propietari seleccionat a la taula.
+     */
 
     private void mostrarDadesPropietari() {
         int fila = view.getTaulaPropietaris().getSelectedRow();

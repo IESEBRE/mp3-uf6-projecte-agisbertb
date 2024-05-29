@@ -3,9 +3,16 @@ package org.example.model.exceptions;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Excepció personalitzada per gestionar errors específics relacionats amb les operacions de la base de dades.
+ * Inclou codis d'error específics que descriuen diferents tipus d'errors que poden ocórrer durant les operacions de la base de dades.
+ */
+
 public class DAOException extends Exception {
 
     private static final Map<Integer, String> missatges = new HashMap<>();
+
+    // Bloc d'inicialització estàtic per emplenar el mapa de missatges d'errors amb descripcions específiques.
 
     static {
         missatges.put(0, "Error al connectar a la BD!!");
@@ -40,26 +47,59 @@ public class DAOException extends Exception {
         missatges.put(33, "El preu de la revisió és invàlid! Ha de ser un valor positiu.");
     }
 
-    private int tipo;
+    private int tipo; // Codi d'error específic d'aquesta excepció.
+
+    /**
+     * Constructor per a excepcions amb un codi d'error, utilitzant un missatge predeterminat basat en el codi.
+     *
+     * @param tipo El codi d'error que identifica el tipus d'error ocorregut.
+     */
 
     public DAOException(int tipo) {
         super(missatges.get(tipo));
         this.tipo = tipo;
     }
 
+    /**
+     * Constructor per a excepcions amb un codi d'error i un missatge d'error personalitzat.
+     *
+     * @param tipo El codi d'error que identifica el tipus d'error ocorregut.
+     * @param message El missatge personalitzat que descriu l'error.
+     */
+
     public DAOException(int tipo, String message) {
         super(message);
         this.tipo = tipo;
     }
+
+    /**
+     * Constructor per a excepcions amb un codi d'error, un missatge d'error personalitzat i una causa.
+     *
+     * @param tipo El codi d'error que identifica el tipus d'error ocorregut.
+     * @param message El missatge personalitzat que descriu l'error.
+     * @param cause La causa original de l'excepció (una excepció que va causar aquesta).
+     */
 
     public DAOException(int tipo, String message, Throwable cause) {
         super(message, cause);
         this.tipo = tipo;
     }
 
+    /**
+     * Obté el codi d'error associat amb aquesta excepció.
+     *
+     * @return El codi d'error.
+     */
+
     public int getTipo() {
         return tipo;
     }
+
+    /**
+     * Obté el missatge d'error associat amb el codi d'error d'aquesta excepció.
+     *
+     * @return El missatge d'error corresponent al codi d'error.
+     */
 
     public String getCodi() {
         return missatges.get(tipo);

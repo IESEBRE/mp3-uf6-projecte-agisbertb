@@ -13,11 +13,33 @@ import java.beans.PropertyChangeSupport;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Controlador per a la gestió de bicicletes.
+ *
+ * Aquest controlador s'encarrega de la gestió de bicicletes, incloent la creació,
+ * modificació i eliminació de bicicletes, així com la interacció amb la vista
+ * associada i la gestió d'excepcions.
+ *
+ * @author Andreu Gisbert Bel
+ * @version 1.0
+ */
+
 public class BiciController {
     private final BiciDAOImpl bicicletaDAO;
     private final Vista view;
     private final PropertyChangeSupport propertyChangeSupport;
     private final ViewController viewController;
+
+    /**
+     * Constructor del controlador de bicicletes.
+     *
+     * Inicialitza les dependències necessàries, configura els escoltadors d'esdeveniments
+     * i inicialitza la vista.
+     *
+     * @param bicicletaDAO Implementació del DAO per a bicicletes
+     * @param view Vista associada a aquest controlador
+     * @param viewController Controlador de la vista principal
+     */
 
     public BiciController(BiciDAOImpl bicicletaDAO, Vista view, ViewController viewController) {
         this.bicicletaDAO = bicicletaDAO;
@@ -33,6 +55,10 @@ public class BiciController {
         propertyChangeSupport.firePropertyChange(ExceptionController.PROP_EXCEPCIO, null, excepcio);
     }
 
+    /**
+     * Inicialitza la vista carregant les dades de bicicletes i configurant components.
+     */
+
     private void initView() {
         try {
             List<Bici> bicis = bicicletaDAO.getAll();
@@ -42,6 +68,10 @@ public class BiciController {
             setExcepcio(new DAOException(e.getTipo()));
         }
     }
+
+    /**
+     * Configura els escoltadors d'esdeveniments per la interfície d'usuari.
+     */
 
     private void initListeners() {
         ActionListener actionListener = e -> {
@@ -59,6 +89,12 @@ public class BiciController {
             }
         });
     }
+
+    /**
+     * Recupera les dades d'una bicicleta des de la vista.
+     *
+     * @return Bici amb les dades provinents dels camps de la vista o null si hi ha errors
+     */
 
     private Bici getBiciDadesVista() {
         try {
@@ -85,6 +121,14 @@ public class BiciController {
         }
     }
 
+    /**
+     * Valida les dades d'una bicicleta abans de la seva inserció o modificació.
+     *
+     * @param bici Bici a validar
+     * @return true si la bicicleta és vàlida, false en cas contrari
+     * @throws DAOException si hi ha un error de validació
+     */
+
     private boolean validarBici(Bici bici) throws DAOException {
         String regex = "^[A-ZÀ-ÚÑÇ][a-zà-úñç]*(\\s+[A-ZÀ-ÚÑÇ][a-zà-úñç]*)*$";
 
@@ -102,6 +146,10 @@ public class BiciController {
         }
         return true;
     }
+
+    /**
+     * Insereix una nova bicicleta a la base de dades.
+     */
 
     private void inserirBici() {
         try {
@@ -122,6 +170,10 @@ public class BiciController {
             JOptionPane.showMessageDialog(view, "Pes i Any han de ser números", "Error de format", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    /**
+     * Modifica una bicicleta existent.
+     */
 
     private void modificarBici() {
         try {
@@ -155,6 +207,10 @@ public class BiciController {
         }
     }
 
+    /**
+     * Elimina una bicicleta de la base de dades.
+     */
+
     private void eliminarBici() {
         try {
             int fila = view.getTaulaBicis().getSelectedRow();
@@ -177,6 +233,12 @@ public class BiciController {
         }
     }
 
+    /**
+     * Actualitza la taula de bicicletes amb les dades actuals.
+     *
+     * @param bicis Llista de bicicletes per mostrar a la taula
+     */
+
     public void updateBiciTable(List<Bici> bicis) {
         DefaultTableModel model = (DefaultTableModel) view.getTaulaBicis().getModel();
         model.setRowCount(0);
@@ -189,6 +251,10 @@ public class BiciController {
         viewController.updateBiciComboBox(bicis);
     }
 
+    /**
+     * Neteja els camps de dades de la bicicleta a la vista.
+     */
+
     private void llimpiarDadesBici() {
         view.getCampMarca().setText("");
         view.getCampModelBici().setText("");
@@ -198,6 +264,10 @@ public class BiciController {
         view.getComboCarboni().setSelectedIndex(0);
         view.getComboPropietari().setSelectedIndex(0);
     }
+
+    /**
+     * Mostra les dades d'una bicicleta seleccionada a la taula.
+     */
 
     private void mostrarDadesBici() {
         int fila = view.getTaulaBicis().getSelectedRow();

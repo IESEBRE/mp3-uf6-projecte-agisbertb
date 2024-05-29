@@ -4,12 +4,24 @@ import org.example.model.daos.DAO;
 import org.example.model.entities.Propietari;
 import org.example.model.exceptions.DAOException;
 import org.example.utils.DBUtil;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementació de l'interfície DAO per a objectes Propietari.
+ * Proporciona la gestió de persistència per a objectes Propietari a la base de dades.
+ */
+
 public class PropietariDAOImpl implements DAO<Propietari> {
+
+    /**
+     * Recupera un propietari pel seu ID.
+     *
+     * @param id El ID del propietari a recuperar.
+     * @return El propietari si es troba, o null si no es troba.
+     * @throws DAOException si ocorre un error de base de dades.
+     */
 
     @Override
     public Propietari get(Long id) throws DAOException {
@@ -47,6 +59,13 @@ public class PropietariDAOImpl implements DAO<Propietari> {
         return propietari;
     }
 
+    /**
+     * Recupera tots els propietaris de la base de dades.
+     *
+     * @return Una llista de tots els propietaris.
+     * @throws DAOException si ocorre un error de base de dades.
+     */
+
     @Override
     public List<Propietari> getAll() throws DAOException {
         List<Propietari> propietaris = new ArrayList<>();
@@ -69,6 +88,13 @@ public class PropietariDAOImpl implements DAO<Propietari> {
         }
         return propietaris;
     }
+
+    /**
+     * Guarda un nou propietari a la base de dades.
+     *
+     * @param propietari El propietari a guardar.
+     * @throws DAOException si ocorre un error de base de dades o si no es pot guardar.
+     */
 
     @Override
     public void save(Propietari propietari) throws DAOException {
@@ -99,6 +125,12 @@ public class PropietariDAOImpl implements DAO<Propietari> {
         }
     }
 
+    /**
+     * Actualitza un propietari existent a la base de dades.
+     *
+     * @param propietari El propietari a actualitzar.
+     * @throws DAOException si el propietari és null, el seu ID és null, o si ocorre un error de base de dades.
+     */
 
     @Override
     public void update(Propietari propietari) throws DAOException {
@@ -118,6 +150,13 @@ public class PropietariDAOImpl implements DAO<Propietari> {
             throw new DAOException(1, e.getMessage());
         }
     }
+
+    /**
+     * Elimina un propietari de la base de dades pel seu ID.
+     *
+     * @param id El ID del propietari a eliminar.
+     * @throws DAOException si l'ID és null o si ocorre un error de base de dades.
+     */
 
     @Override
     public void delete(Long id) throws DAOException {

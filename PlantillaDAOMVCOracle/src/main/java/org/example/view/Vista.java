@@ -2,9 +2,14 @@ package org.example.view;
 
 import org.example.model.entities.Bici;
 import org.example.model.entities.Propietari;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+
+/**
+ * Aquesta classe representa la interfície gràfica principal de l'aplicació,
+ * inclou pestanyes i taulers per gestionar bicicletes, propietaris i revisions.
+ */
 
 public class Vista extends JFrame {
 
@@ -42,6 +47,7 @@ public class Vista extends JFrame {
     private JTextField campPreuRevisio;
 
     // Getters
+
     public JTable getTaulaBicis() {
         return taulaBicis;
     }
@@ -130,8 +136,10 @@ public class Vista extends JFrame {
         return pestanyes;
     }
 
+    /**
+     * Constructor que inicialitza la finestra principal i configura els components bàsics.
+     */
 
-    // Constructor de la classe
     public Vista() {
         this.setContentPane(panel);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -139,8 +147,11 @@ public class Vista extends JFrame {
         this.setVisible(false);
     }
 
+    /**
+     * Crea components d'UI personalitzats, configurant taulers i pestanyes.
+     */
+
     private void createUIComponents() {
-        // TODO: place custom component creation code here
         scrollPane1 = new JScrollPane();
         taulaBicis = new JTable();
         taulaPropietaris = new JTable();

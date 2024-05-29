@@ -5,12 +5,24 @@ import org.example.model.entities.Bici;
 import org.example.model.entities.Revisio;
 import org.example.model.exceptions.DAOException;
 import org.example.utils.DBUtil;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementació de l'interfície DAO per a objectes Revisio.
+ * Proporciona la gestió de persistència per a objectes Revisio a la base de dades.
+ */
+
 public class RevisioDAOImpl implements DAO<Revisio> {
+
+    /**
+     * Recupera una revisió pel seu ID.
+     *
+     * @param id El ID de la revisió a recuperar.
+     * @return La revisió si es troba, o null si no es troba.
+     * @throws DAOException si ocorre un error de base de dades.
+     */
 
     @Override
     public Revisio get(Long id) throws DAOException {
@@ -49,6 +61,13 @@ public class RevisioDAOImpl implements DAO<Revisio> {
         return revisio;
     }
 
+    /**
+     * Recupera totes les revisions de la base de dades.
+     *
+     * @return Una llista de totes les revisions.
+     * @throws DAOException si ocorre un error de base de dades.
+     */
+
     @Override
     public List<Revisio> getAll() throws DAOException {
         List<Revisio> revisions = new ArrayList<>();
@@ -73,6 +92,13 @@ public class RevisioDAOImpl implements DAO<Revisio> {
         }
         return revisions;
     }
+
+    /**
+     * Guarda una nova revisió a la base de dades.
+     *
+     * @param revisio La revisió a guardar.
+     * @throws DAOException si ocorre un error de base de dades o si no es pot guardar.
+     */
 
     @Override
     public void save(Revisio revisio) throws DAOException {
@@ -103,6 +129,13 @@ public class RevisioDAOImpl implements DAO<Revisio> {
         }
     }
 
+    /**
+     * Actualitza una revisió existent a la base de dades.
+     *
+     * @param revisio La revisió a actualitzar.
+     * @throws DAOException si la revisió és null, el seu ID és null, o si ocorre un error de base de dades.
+     */
+
     @Override
     public void update(Revisio revisio) throws DAOException {
         if (revisio == null || revisio.getId() == null) {
@@ -128,6 +161,13 @@ public class RevisioDAOImpl implements DAO<Revisio> {
         }
     }
 
+    /**
+     * Elimina una revisió de la base de dades pel seu ID.
+     *
+     * @param id El ID de la revisió a eliminar.
+     * @throws DAOException si l'ID és null o si ocorre un error de base de dades.
+     */
+
     @Override
     public void delete(Long id) throws DAOException {
         if (id == null) {
@@ -143,6 +183,15 @@ public class RevisioDAOImpl implements DAO<Revisio> {
             throw new DAOException(1, throwables.getMessage());
         }
     }
+
+    /**
+     * Recupera una bicicleta pel seu ID utilitzant una connexió existent.
+     *
+     * @param biciId El ID de la bicicleta a recuperar.
+     * @param con La connexió de base de dades activa.
+     * @return La bicicleta si es troba, o null si no es troba.
+     * @throws SQLException si ocorre un error de base de dades durant la consulta.
+     */
 
     private Bici getBici(Long biciId, Connection con) throws SQLException {
         if (biciId == null) return null;
