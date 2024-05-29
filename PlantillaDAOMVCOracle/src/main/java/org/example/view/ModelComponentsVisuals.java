@@ -1,111 +1,146 @@
 package org.example.view;
 
-import org.example.model.entities.Alumne;
+import org.example.model.entities.Bici;
+import org.example.model.entities.Propietari;
+import org.example.model.entities.Revisio;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.time.LocalDate;
+
+/**
+ * Gestiona els models de dades per als components de la interfície gràfica com taules i comboBoxes.
+ * Aquesta classe inicialitza i proporciona els models per a les dades mostrades en les interfícies d'usuari.
+ */
 
 public class ModelComponentsVisuals {
 
-    private DefaultTableModel modelTaulaAlumne;
-    private DefaultTableModel modelTaulaMat;
-    private ComboBoxModel<Alumne.Matricula.Modul> comboBoxModel;
+    private DefaultTableModel modelTaulaBicis;
+    private DefaultTableModel modelTaulaPropietaris;
+    private DefaultTableModel modelTaulaRevisions;
 
-    //Getters
+    private DefaultComboBoxModel<Bici.TipoBici> comboBoxModelTipusBici;
+    private DefaultComboBoxModel<Bici.Carboni> comboBoxModelCarboni;
+    private DefaultComboBoxModel<Propietari> comboBoxModelPropietari;
+    private DefaultComboBoxModel<Bici> comboBoxModelBici;
 
-
-    public ComboBoxModel<Alumne.Matricula.Modul> getComboBoxModel() {
-        return comboBoxModel;
-    }
-
-    public DefaultTableModel getModelTaulaAlumne() {
-        return modelTaulaAlumne;
-    }
-
-    public DefaultTableModel getModelTaulaMat() {
-        return modelTaulaMat;
-    }
+    /**
+     * Constructor que inicialitza els models per a les taules i comboBoxes.
+     */
 
     public ModelComponentsVisuals() {
+        initializeBiciModel();
+        initializePropietariModel();
+        initializeRevisioModel();
 
+        comboBoxModelTipusBici = new DefaultComboBoxModel<>(Bici.TipoBici.values());
+        comboBoxModelCarboni = new DefaultComboBoxModel<>(Bici.Carboni.values());
+        comboBoxModelPropietari = new DefaultComboBoxModel<>();
+        comboBoxModelBici = new DefaultComboBoxModel<>();
+    }
 
-        //Anem a definir l'estructura de la taula dels alumnes
-        modelTaulaAlumne =new DefaultTableModel(new Object[]{"Nom","Pes","És alumne?","Object"},0){
-            /**
-             * Returns true regardless of parameter values.
-             *
-             * @param row    the row whose value is to be queried
-             * @param column the column whose value is to be queried
-             * @return true
-             * @see #setValueAt
-             */
+    /**
+     * Inicialitza el model de taula per a bicicletes, especificant les columnes i tipus de dades.
+     */
+
+    private void initializeBiciModel() {
+        modelTaulaBicis = new DefaultTableModel(new Object[]{"Marca", "Model", "Pes", "Any", "Tipus", "Carboni", "Propietari", "Object"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-
-                //Fem que TOTES les cel·les de la columna 1 de la taula es puguen editar
-                //if(column==1) return true;
                 return false;
             }
 
-
-
-            //Permet definir el tipo de cada columna
             @Override
-            public Class getColumnClass(int column) {
+            public Class<?> getColumnClass(int column) {
                 switch (column) {
-                    case 0:
-                        return String.class;
-                    case 1:
-                        return Double.class;
-                    case 2:
-                        return Boolean.class;
-                    default:
-                        return Object.class;
+                    case 0: return String.class;
+                    case 1: return String.class;
+                    case 2: return Double.class;
+                    case 3: return Integer.class;
+                    case 4: return Bici.TipoBici.class;
+                    case 5: return Bici.Carboni.class;
+                    case 6: return Propietari.class;
+                    default: return Object.class;
                 }
             }
         };
+    }
 
+    /**
+     * Inicialitza el model de taula per a propietaris, definint les columnes i configurant la no edició.
+     */
 
-
-
-        //Anem a definir l'estructura de la taula de les matrícules
-        modelTaulaMat =new DefaultTableModel(new Object[]{"MP","Nota"},0){
-            /**
-             * Returns true regardless of parameter values.
-             *
-             * @param row    the row whose value is to be queried
-             * @param column the column whose value is to be queried
-             * @return true
-             * @see #setValueAt
-             */
+    private void initializePropietariModel() {
+        modelTaulaPropietaris = new DefaultTableModel(new Object[]{"Nom", "Cognom", "Telefon", "Email", "Object"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-
-                //Fem que TOTES les cel·les de la columna 1 de la taula es puguen editar
-                //if(column==1) return true;
                 return false;
             }
 
-            //Permet definir el tipo de cada columna
             @Override
-            public Class getColumnClass(int column) {
+            public Class<?> getColumnClass(int column) {
                 switch (column) {
-                    case 0:
-                        return Alumne.Matricula.Modul.class;
-                    case 1:
-                        return Integer.class;
-                    default:
-                        return Object.class;
+                    case 0: return String.class;
+                    case 1: return String.class;
+                    case 2: return String.class;
+                    case 3: return String.class;
+                    default: return Object.class;
                 }
             }
         };
+    }
 
+    /**
+     * Inicialitza el model de taula per a revisions, establint columnes i restringint l'edició.
+     */
 
+    private void initializeRevisioModel() {
+        modelTaulaRevisions = new DefaultTableModel(new Object[]{"Data", "Descripcio","Preu", "Bici" ,"Object"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
 
-        //Estructura del comboBox
-        comboBoxModel=new DefaultComboBoxModel<>(Alumne.Matricula.Modul.values());
+            @Override
+            public Class<?> getColumnClass(int column) {
+                switch (column) {
+                    case 0: return LocalDate.class;
+                    case 1: return String.class;
+                    case 2: return Double.class;
+                    case 3: return Bici.class;
+                    default: return Object.class;
+                }
+            }
+        };
+    }
 
+    // Getters
 
+    public DefaultTableModel getModelTaulaBicis() {
+        return modelTaulaBicis;
+    }
 
+    public DefaultTableModel getModelTaulaPropietaris() {
+        return modelTaulaPropietaris;
+    }
+
+    public DefaultTableModel getModelTaulaRevisions() {
+        return modelTaulaRevisions;
+    }
+
+    public ComboBoxModel<Bici.TipoBici> getComboBoxModelTipusBici() {
+        return comboBoxModelTipusBici;
+    }
+
+    public ComboBoxModel<Bici.Carboni> getComboBoxModelCarboni() {
+        return comboBoxModelCarboni;
+    }
+
+    public ComboBoxModel<Propietari> getComboBoxModelPropietari() {
+        return comboBoxModelPropietari;
+    }
+
+    public ComboBoxModel<Bici> getComboBoxModelBici() {
+        return comboBoxModelBici;
     }
 }
